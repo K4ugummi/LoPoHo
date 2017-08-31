@@ -86,12 +86,14 @@ public class PlayerController : MonoBehaviour {
         
         // Calculate stamina + final movement vector depending on running or not
         if (isKeyShift) {
-            if (currentStaminaAmount > 0 && (_xMovement != 0f || _zMovement != 0f)) {
-                currentStaminaAmount -= staminaBurnSpeed * Time.deltaTime;
-                if (currentStaminaAmount <= 0) {
-                    isKeyShift = false;
+            if (_zMovement > 0.0005) {
+                if (currentStaminaAmount > 0 && (_xMovement != 0f || _zMovement != 0f)) {
+                    currentStaminaAmount -= staminaBurnSpeed * Time.deltaTime;
+                    if (currentStaminaAmount <= 0) {
+                        isKeyShift = false;
+                    }
+                    _velocity *= runningSpeedMult;
                 }
-                _velocity *= runningSpeedMult;
             }
         }
         else {
