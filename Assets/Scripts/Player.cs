@@ -95,7 +95,7 @@ public class Player : NetworkBehaviour {
         currentHealth -= _dmg;
         Debug.Log("Player: " + transform.name + " now taken " + _dmg + " damage from " + _sourceID + ".");
 
-        if (currentHealth <= 0) {
+        if (currentHealth <= Mathf.Epsilon) {
             Die(_sourceID);
         }
     }
