@@ -42,22 +42,19 @@ public class PlayerScore : MonoBehaviour {
             return;
         }
 
-        int _killsSinceLastUpdate = player.kills;
-        int _deathsSinceLastUpdate = player.deaths;
+        // Current Database values
+        int _dataKills = UserAccountDataHandling.DataToKills(_data);
+        int _dataDeaths = UserAccountDataHandling.DataToDeaths(_data);
 
-        int _kills = UserAccountDataHandling.DataToKills(_data);
-        int _deaths = UserAccountDataHandling.DataToDeaths(_data);
+        int _newDataKills = (lastKills - player.kills) + _dataKills;
+        int _newDataDeaths = (lastDeaths - player.deaths) + _dataDeaths;
 
-        int _newKills = _killsSinceLastUpdate + _kills;
-        int _newDeaths = _deathsSinceLastUpdate + _deaths;
-
-        string _newData = UserAccountDataHandling.ValuesToData(_newKills, _newDeaths);
-
-        Debug.Log("PlayerScore: Syncing new data: " + _newData);
+        string _newData = UserAccountDataHandling.ValuesToData(_newDataKills, _newDataDeaths);
 
         lastKills = player.kills;
         lastDeaths = player.deaths;
-
+        
+        Debug.Log("PlayerScore: Syncing new data: " + _newData);
         UserAccountManager.instance.SendData(_newData);
     }
 }
