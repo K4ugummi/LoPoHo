@@ -7,7 +7,12 @@ public class NotificationItem : MonoBehaviour {
     Text notification;
 
     public void PlayerKilled(string _playerKilled, string _dmgSource) {
-        notification.text = "<color=red><b>" + _dmgSource + "</b></color> killed <color=red><b>" + _playerKilled + "</b></color>";
+        if (_playerKilled != _dmgSource) {
+            notification.text = "<color=red><b>" + _dmgSource + "</b></color> killed <color=red><b>" + _playerKilled + "</b></color>";
+        }
+        else {
+            notification.text = "<color=red><b>" + _playerKilled + "</b></color> commited suicide!";
+        }
     }
 
     public void PlayerJoined(string _player) {
