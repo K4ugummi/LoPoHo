@@ -1,0 +1,122 @@
+fileFormatVersion: 2
+guid: bd320c831dbedc14db05745d0009c7a7
+timeCreated: 1504007771
+licenseType: Free
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: Fruits
+    100002: Leave
+    100004: Leave1
+    100006: Leave2
+    100008: Leave3
+    100010: Leaves
+    100012: //RootNode
+    100014: Trunk
+    400000: Fruits
+    400002: Leave
+    400004: Leave1
+    400006: Leave2
+    400008: Leave3
+    400010: Leaves
+    400012: //RootNode
+    400014: Trunk
+    2300000: Fruits
+    2300002: Leave
+    2300004: Leave1
+    2300006: Leave2
+    2300008: Leave3
+    2300010: Leaves
+    2300012: //RootNode
+    2300014: Trunk
+    3300000: Fruits
+    3300002: Leave
+    3300004: Leave1
+    3300006: Leave2
+    3300008: Leave3
+    3300010: Leaves
+    3300012: //RootNode
+    3300014: Trunk
+    4300000: Tree_4
+    4300002: Fruits
+    4300004: Leaves
+    4300006: Leave
+    4300008: Leave1
+    4300010: Leave2
+    4300012: Leave3
+    4300014: Trunk
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
