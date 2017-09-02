@@ -46,8 +46,8 @@ public class PlayerScore : MonoBehaviour {
         int _dataKills = UserAccountDataHandling.DataToKills(_data);
         int _dataDeaths = UserAccountDataHandling.DataToDeaths(_data);
 
-        int _newDataKills = (lastKills - player.kills) + _dataKills;
-        int _newDataDeaths = (lastDeaths - player.deaths) + _dataDeaths;
+        int _newDataKills = (player.kills - lastKills) + _dataKills;
+        int _newDataDeaths = (player.deaths - lastDeaths) + _dataDeaths;
 
         string _newData = UserAccountDataHandling.ValuesToData(_newDataKills, _newDataDeaths);
 
