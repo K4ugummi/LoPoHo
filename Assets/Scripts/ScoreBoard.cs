@@ -16,7 +16,7 @@ public class ScoreBoard : MonoBehaviour {
             GameObject _itemGO = (GameObject)Instantiate(playerScoreItem, playerScoreList);
             PlayerScoreItem _item = _itemGO.GetComponent<PlayerScoreItem>();
             if (_item != null) {
-                _item.Setup(_player.userName, _player.kills, _player.deaths, 999);
+                _item.Setup(_player.userName, _player.kills, _player.deaths, 0);
             }
         }
 
