@@ -13,32 +13,23 @@ public class RegisterControls : MonoBehaviour {
     [SerializeField]
     InputField registerConfirmPassword;
 
-    int selected;
-
     void Start() {
         registerName.Select();
-        selected = 0;
     }
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.Tab)) {
-            switch (selected) {
-                case 0:
-                    registerPassword.Select();
-                    selected = 1;
-                    break;
-                case 1:
-                    registerConfirmPassword.Select();
-                    selected = 2;
-                    break;
-                case 2:
-                    registerName.Select();
-                    selected = 0;
-                    break;
-                default:
-                    break;
+            if (registerName.isFocused) {
+                registerPassword.Select();
+            }
+            else if (registerPassword.isFocused) {
+                registerConfirmPassword.Select();
+            }
+            else if (registerConfirmPassword.isFocused) {
+                registerName.Select();
             }
         }
+        
         if (Input.GetKeyDown(KeyCode.Return)) {
             loginMenu.Register_RegisterButtonPressed();
         }
