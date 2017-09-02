@@ -20,6 +20,9 @@ public class NotificationFeed : MonoBehaviour {
     }
 
     public void OnPlayerJoined(string _player) {
+        if (_player == "Loading...") {
+            return;
+        }
         GameObject _go = Instantiate(notificationItem, this.transform);
         _go.GetComponent<NotificationItem>().PlayerJoined(_player);
         Destroy(_go, notificationTime);

@@ -74,8 +74,9 @@ public class UserAccountManager : MonoBehaviour {
 
     public void GetData(OnDataRecievedCallback _onDataReceived) {
         //Called when the player hits 'Get Data' to retrieve the data string on their account. Switches UI to 'Loading...' and starts coroutine to get the players data string from the server
-        if (isLoggedIn)
+        if (isLoggedIn) {
             StartCoroutine(GetData_numerator(_onDataReceived));
+        }
     }
 
     IEnumerator GetData_numerator(OnDataRecievedCallback _onDataReceived) {
