@@ -61,12 +61,12 @@ public class ItemManager : NetworkBehaviour {
     //}
     
     [Command]
-	public void CmdOnEquipItem (int  _itemIndex) {
+	public void CmdOnEquipItem(int  _itemIndex) {
         RpcOnEquipItem(_itemIndex);
     }
 
     [ClientRpc]
-    void RpcOnEquipItem (int _itemIndex) {
+    void RpcOnEquipItem(int _itemIndex) {
         if (currentItemInstance != null) {
             Destroy(currentItemInstance);
         }
