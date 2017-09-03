@@ -71,16 +71,15 @@ public class PlayerInteraction : NetworkBehaviour {
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, currentItem.itemRange, hitMask)) {
             // TODO: Differentiate hit effect and actions!
             // Something has been hit by clicking primary mouse button! 
+            // Spawn the on hit effect on the server
+            CmdOnPrimaryHit(_hit.point, _hit.normal);
             switch (_hit.collider.tag) {
                 case PLAYER_TAG:
-                    CmdPlayerShot(_hit.collider.name, currentItem.itemDamage, transform.name);
+                    CmdOnPlayerShot(_hit.collider.name, currentItem.itemDamage, transform.name);
                     break;
                 default:
                     break;
             }
-
-            // Spawn the on hit effect on the server
-            CmdOnPrimaryHit(_hit.point, _hit.normal);
         }
     }
 
@@ -114,7 +113,7 @@ public class PlayerInteraction : NetworkBehaviour {
     }
 
     [Command]   // only called on the server!
-    void CmdPlayerShot(string _playerID, int _damage, string _sourceID) {
+    void CmdOnPlayerShot(string _playerID, int _damage, string _sourceID) {
         Player _player = GameManager.GetPlayer(_playerID);
         _player.RpcTakeDamage(_damage, _sourceID);
     } 
