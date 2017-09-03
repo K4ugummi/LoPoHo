@@ -29,8 +29,9 @@ public class Player : NetworkBehaviour {
 
     [SyncVar]
     public string userName = "Loading...";
-
+    [SyncVar]
     public int kills;
+    [SyncVar]
     public int deaths;
 
     [SerializeField]
@@ -93,7 +94,6 @@ public class Player : NetworkBehaviour {
             return;
         }
         currentHealth -= _dmg;
-        Debug.Log("Player: " + transform.name + " now taken " + _dmg + " damage from " + _sourceID + ".");
 
         if (currentHealth <= Mathf.Epsilon) {
             Die(_sourceID);

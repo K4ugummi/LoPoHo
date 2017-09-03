@@ -115,8 +115,6 @@ public class PlayerInteraction : NetworkBehaviour {
 
     [Command]   // only called on the server!
     void CmdPlayerShot(string _playerID, int _damage, string _sourceID) {
-        Debug.Log("PlayerInteraction: " + _playerID + " has been shot with " + currentItem.name + ".");
-
         Player _player = GameManager.GetPlayer(_playerID);
         _player.RpcTakeDamage(_damage, _sourceID);
     } 
