@@ -32,7 +32,7 @@ public class PlayerInteraction : NetworkBehaviour {
         }
         if (currentItem != null) {
             if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
-                if (Input.GetButtonDown("Reload") || currentItem.itemAmmo == 0) {
+                if (Input.GetButtonDown("Reload")) {
                     itemManager.Reload();
                     return;
                 }
@@ -82,16 +82,15 @@ public class PlayerInteraction : NetworkBehaviour {
         if (!isLocalPlayer || itemManager.isReloading) {
             return;
         }
+        currentItem.itemAmmo--;
+
+        // Call the OnPrimary method on the server
+        CmdOnPrimary();
 
         if (currentItem.itemAmmo <= 0) {
             itemManager.Reload();
             return;
         }
-
-        currentItem.itemAmmo--;
-
-        // Call the OnPrimary method on the server
-        CmdOnPrimary();
 
         RaycastHit _hit;
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, currentItem.itemRange, hitMask)) {
