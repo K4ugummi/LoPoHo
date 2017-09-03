@@ -71,7 +71,7 @@ public class PlayerInteraction : NetworkBehaviour {
         }
 
         if (_prevSelectedItemIndex != selectedItemIndex) {
-            itemManager.CmdOnEquipItem(selectedItemIndex);
+            SwitchItem(selectedItemIndex);
         }
 
     }
@@ -107,6 +107,14 @@ public class PlayerInteraction : NetworkBehaviour {
                     break;
             }
         }
+    }
+
+    [Client]
+    void SwitchItem(int _itemIndex) {
+        if (!isLocalPlayer || itemManager.isReloading) {
+            return;
+        }
+        itemManager.CmdOnEquipItem(selectedItemIndex);
     }
 
     // Is called on the server, when a player uses his primary mouse button
