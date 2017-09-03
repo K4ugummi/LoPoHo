@@ -6,13 +6,16 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerItem : MonoBehaviour {
 
-    public string itemName = "Glock";
-
-    public int itemDamage = 10;
-    public float itemRange = 100f;
-    public float itemFireRate = 10f;
-
-    public int itemMaxAmmo = 20;
+    [SerializeField]
+    public string itemName;
+    [SerializeField]
+    public int itemDamage;
+    [SerializeField]
+    public float itemRange;
+    [SerializeField]
+    public float itemFireRate;
+    [SerializeField]
+    public int itemMaxAmmo;
     [HideInInspector]
     public int itemAmmo;
 
@@ -21,6 +24,10 @@ public class PlayerItem : MonoBehaviour {
     public GameObject itemGraphics;
 
     public PlayerItem() {
+        itemAmmo = itemMaxAmmo;
+    }
+
+    public void SetWeaponAmmoToMax() {
         itemAmmo = itemMaxAmmo;
     }
 }

@@ -14,6 +14,8 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField]
     RectTransform ammoBarFill;
     [SerializeField]
+    Text weaponText;
+    [SerializeField]
 	Text ammoText;
 
 	[SerializeField]
@@ -40,8 +42,14 @@ public class PlayerUI : MonoBehaviour {
 	void Update () {
 		SetStaminaAmount(controller.GetCurrentStaminaAmount(), controller.GetMaxStaminaAmount());
 		SetHealthAmount(player.GetCurrentHealth(), player.GetMaxHealth());
-		SetAmmoAmount(itemManager.GetCurrentItem().itemAmmo, itemManager.GetCurrentItem().itemMaxAmmo);
-
+        if (itemManager.GetCurrentItem() != null) {
+            SetWeaponName(itemManager.GetCurrentItem().itemName);
+            SetAmmoAmount(itemManager.GetCurrentItem().itemAmmo, itemManager.GetCurrentItem().itemMaxAmmo);
+        }
+        else {
+            SetWeaponName("None");
+            SetAmmoAmount(0, 0);
+        }
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			TogglePauseMenu();
 		}
@@ -74,9 +82,19 @@ public class PlayerUI : MonoBehaviour {
         healthText.text = "Health (" + Mathf.RoundToInt(_amount) + "/" + Mathf.RoundToInt(_max) + ")";
     }
 
-	void SetAmmoAmount (int _amount, int _max) {
-        ammoBarFill.localScale = new Vector3(1f, Util.GetValueInPct(_amount, _max), 1f);
-        ammoText.text = _amount.ToString() + " / " + _max.ToString();
+    void SetWeaponName(string _name) {
+        weaponText.text = _name;
+    }
+
+    void SetAmmoAmount (int _amount, int _max) {
+        if (_max == 0 && _amount == 0) {
+            ammoBarFill.localScale = new Vector3(1f, 0f, 1f);
+            ammoText.text = "- / -";
+        }
+        else {
+            ammoBarFill.localScale = new Vector3(1f, Util.GetValueInPct(_amount, _max), 1f);
+            ammoText.text = _amount.ToString() + " / " + _max.ToString();
+        }
 	}
 
 }

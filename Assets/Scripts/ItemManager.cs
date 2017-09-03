@@ -8,44 +8,88 @@ public class ItemManager : NetworkBehaviour {
 
     [SerializeField]
 	private Transform itemHolder;
+    private GameObject currentItemInstance;
 
-	[SerializeField]
-	private PlayerItem primaryItem;
+	//[SerializeField]
+	//private PlayerItem primaryItem;
+    [SerializeField]
+    private PlayerItem[] items;
 
 	private PlayerItem currentItem;
-	private ItemGraphics currentItemGraphics;
+    private int selectedItemIndex = 0;
+    private ItemGraphics currentItemGraphics;
     private ItemSounds currentItemSounds;
 
 	public bool isReloading = false;
 
-	void Start () { 
-		EquipItem(primaryItem);
+	void Start() { 
+        if (!isLocalPlayer) {
+            return;
+        }
+		CmdOnEquipItem(0);
+        if (isLocalPlayer) {
+            foreach (PlayerItem _item in items) {
+                _item.SetWeaponAmmoToMax();
+            }
+        }
 	}
 
-	public PlayerItem GetCurrentItem() {
-		return currentItem;
-	}
+    //[Client]
+    //void Update() {
+    //    int _prevSelectedItemIndex = selectedItemIndex;
 
-	public ItemGraphics GetCurrentGraphics() {
-		return currentItemGraphics;
-	}
+    //    if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
+    //        if (selectedItemIndex >= items.Length - 1) {
+    //            selectedItemIndex = 0;
+    //        }
+    //        else {
+    //            selectedItemIndex++;
+    //        }
+    //    }
+    //    if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
+    //        if (selectedItemIndex <= 0) {
+    //            selectedItemIndex = items.Length - 1;
+    //        }
+    //        else {
+    //            selectedItemIndex--;
+    //        }
+    //    }
 
-    public ItemSounds GetCurrentSounds() {
-        return currentItemSounds;
+    //    if (_prevSelectedItemIndex != selectedItemIndex) {
+    //        CmdOnEquipItem(selectedItemIndex);
+    //    }
+    //}
+    
+    [Command]
+	public void CmdOnEquipItem (int  _itemIndex) {
+        RpcOnEquipItem(_itemIndex);
     }
 
-	void EquipItem (PlayerItem _item) {
-		currentItem = _item;
+    [ClientRpc]
+    void RpcOnEquipItem (int _itemIndex) {
+        if (currentItemInstance != null) {
+            Destroy(currentItemInstance);
+        }
 
-		GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, itemHolder.rotation);
+        PlayerItem _item = items[_itemIndex];
+
+        if (_item == null) {
+            Debug.LogError("ItemManager: Item with itemindex[" + _itemIndex + "] not found!");
+        }
+
+        currentItem = _item;
+
+        GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, itemHolder.rotation);
+        //GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, _item.transform.rotation);
         _itemInstance.transform.SetParent(itemHolder);
+        currentItemInstance = _itemInstance;
 
-		currentItemGraphics = _itemInstance.GetComponent<ItemGraphics>();
+        currentItemGraphics = _itemInstance.GetComponent<ItemGraphics>();
         if (currentItemGraphics == null) {
             Debug.LogError("ItemManager: No ItemGraphics component on item " + _itemInstance.name + "!");
         }
         currentItemSounds = _itemInstance.GetComponent<ItemSounds>();
-        if (currentItemGraphics == null) {
+        if (currentItemSounds == null) {
             Debug.LogError("ItemManager: No ItemSounds component on item " + _itemInstance.name + "!");
         }
         if (isLocalPlayer) {
@@ -53,7 +97,7 @@ public class ItemManager : NetworkBehaviour {
         }
     }
 
-	public void Reload() {
+    public void Reload() {
         if (isReloading) {
             return;
         }
@@ -89,7 +133,32 @@ public class ItemManager : NetworkBehaviour {
     }
 
     public void ResetAmmo() {
-        currentItem.itemAmmo = currentItem.itemMaxAmmo;
+        if (currentItem != null) {
+            currentItem.itemAmmo = currentItem.itemMaxAmmo;
+        }
+    }
+
+    public int GetItemsLength() {
+        return items.Length;
+    }
+
+    public PlayerItem GetCurrentItem() {
+        return currentItem;
+    }
+
+    public string GetCurrentItemName() {
+        if (currentItem != null) {
+            return currentItem.itemName;
+        }
+        return "None";
+    }
+
+    public ItemGraphics GetCurrentGraphics() {
+        return currentItemGraphics;
+    }
+
+    public ItemSounds GetCurrentSounds() {
+        return currentItemSounds;
     }
 
 }

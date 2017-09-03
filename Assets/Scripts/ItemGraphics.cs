@@ -5,6 +5,7 @@ using UnityEngine;
 public class ItemGraphics : MonoBehaviour {
 
 	public ParticleSystem muzzleFlash;
+    public Transform muzzleFlashPosition;
 	public GameObject hitEffectPrefab;
 
 }

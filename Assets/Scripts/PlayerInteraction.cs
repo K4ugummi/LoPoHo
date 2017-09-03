@@ -11,6 +11,7 @@ public class PlayerInteraction : NetworkBehaviour {
     [SerializeField]
     private LayerMask hitMask;
 
+    private int selectedItemIndex = 0;
     private PlayerItem currentItem;
     private ItemManager itemManager;
 
@@ -29,25 +30,50 @@ public class PlayerInteraction : NetworkBehaviour {
         if (PauseMenu.isPauseMenu) {
             return;
         }
-        if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
-            if (Input.GetButtonDown("Reload")) {
-                itemManager.Reload();
-                return;
+        if (currentItem != null) {
+            if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
+                if (Input.GetButtonDown("Reload") || currentItem.itemAmmo == 0) {
+                    itemManager.Reload();
+                    return;
+                }
+            }
+            if (currentItem.itemFireRate <= 0f) {
+                if (Input.GetButtonDown("Fire1")) {
+                    Primary();
+                }
+            }
+            else {
+                if (Input.GetButtonDown("Fire1")) {
+                    InvokeRepeating("Primary", 0f, 1 / currentItem.itemFireRate);
+                }
+                else if (Input.GetButtonUp("Fire1")) {
+                    CancelInvoke("Primary");
+                }
             }
         }
-        if (currentItem.itemFireRate <= 0f) {
-            if (Input.GetButtonDown("Fire1")) {
-                Primary();
+
+        int _prevSelectedItemIndex = selectedItemIndex;
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
+            if (selectedItemIndex >= itemManager.GetItemsLength() - 1) {
+                selectedItemIndex = 0;
+            }
+            else {
+                selectedItemIndex++;
             }
         }
-        else {
-            if (Input.GetButtonDown("Fire1")) {
-                InvokeRepeating("Primary", 0f, 1 / currentItem.itemFireRate);
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
+            if (selectedItemIndex <= 0) {
+                selectedItemIndex = itemManager.GetItemsLength() - 1;
             }
-            else if (Input.GetButtonUp("Fire1")) {
-                CancelInvoke("Primary");
-            } 
+            else {
+                selectedItemIndex--;
+            }
         }
+
+        if (_prevSelectedItemIndex != selectedItemIndex) {
+            itemManager.CmdOnEquipItem(selectedItemIndex);
+        }
+
     }
     // FIRE1
     [Client]    // only called on the client!
@@ -93,7 +119,8 @@ public class PlayerInteraction : NetworkBehaviour {
     [ClientRpc]
     void RpcDoPrimaryEffect() {
         itemManager.GetCurrentGraphics().muzzleFlash.Play();
-        itemManager.GetCurrentSounds().primaryAudio.Play();
+        //itemManager.GetCurrentSounds().primaryAudio.Play();
+        AudioSource.PlayClipAtPoint(itemManager.GetCurrentSounds().primaryAudio.clip, transform.position, 0.5f);
     }
 
     // Is called on the server, when the primary mouse button action has hit something
@@ -108,7 +135,7 @@ public class PlayerInteraction : NetworkBehaviour {
         // TODO: Instantiation objects takes a lot of processing power
         // Look into "object pooling"
         GameObject _hitEffect = Instantiate(itemManager.GetCurrentGraphics().hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
-        AudioSource.PlayClipAtPoint(itemManager.GetCurrentSounds().primaryImpactAudio, _hitPosition, 0.5f);
+        AudioSource.PlayClipAtPoint(itemManager.GetCurrentSounds().primaryImpactAudio.clip, _hitPosition, 0.5f);
         Destroy(_hitEffect, 2f);
     }
 
