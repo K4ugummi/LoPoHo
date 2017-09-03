@@ -44,6 +44,7 @@ public class Player : NetworkBehaviour {
     [SerializeField]
     private GameObject[] disableGameObjectsOnDeath;
 
+    [SyncVar]
     private bool isFirstSetupOnClient = true;
 
     public void SetupPlayer() {
@@ -63,7 +64,6 @@ public class Player : NetworkBehaviour {
     [ClientRpc]
     private void RpcSetupPlayerOnAllClients() {
         // Store if components were enabled in wasEnabled[]
-        Debug.Log("RpcSetupPlayerOnAllClients() isFirstSetup=" + isFirstSetupOnClient);
         if (isFirstSetupOnClient) {
             GameManager.instance.onPlayerJoinedCallback(userName);
             wasEnabledBeforeDeath = new bool[disableComponentsOnDeath.Length];
@@ -78,14 +78,14 @@ public class Player : NetworkBehaviour {
 
 
     // Testfunction to kill the player with shortcut "K"
-    void Update() {
-        if (!isLocalPlayer) {
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.K)) {
-            RpcTakeDamage(99999, transform.name);
-        }
-    }
+    //void Update() {
+    //    if (!isLocalPlayer) {
+    //        return;
+    //    }
+    //    if (Input.GetKeyDown(KeyCode.K)) {
+    //        RpcTakeDamage(99999, transform.name);
+    //    }
+    //}
 
     [ClientRpc]     // a method that is called on all clients
     public void RpcTakeDamage(int _dmg, string _sourceID) {
