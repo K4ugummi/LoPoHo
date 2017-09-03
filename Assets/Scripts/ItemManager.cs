@@ -37,7 +37,7 @@ public class ItemManager : NetworkBehaviour {
 	void EquipItem (PlayerItem _item) {
 		currentItem = _item;
 
-		GameObject _itemInstance = (GameObject)Instantiate(_item.graphics, itemHolder.position, itemHolder.rotation);
+		GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, itemHolder.rotation);
         _itemInstance.transform.SetParent(itemHolder);
 
 		currentItemGraphics = _itemInstance.GetComponent<ItemGraphics>();
@@ -68,9 +68,9 @@ public class ItemManager : NetworkBehaviour {
 
 		CmdOnReload();
 
-		yield return new WaitForSeconds(currentItem.reloadTime);
+		yield return new WaitForSeconds(currentItem.itemReloadTime);
 
-		currentItem.ammo = currentItem.maxAmmo;
+		currentItem.itemAmmo = currentItem.itemMaxAmmo;
 
 		isReloading = false;
 	}
@@ -89,7 +89,7 @@ public class ItemManager : NetworkBehaviour {
     }
 
     public void ResetAmmo() {
-        currentItem.ammo = currentItem.maxAmmo;
+        currentItem.itemAmmo = currentItem.itemMaxAmmo;
     }
 
 }

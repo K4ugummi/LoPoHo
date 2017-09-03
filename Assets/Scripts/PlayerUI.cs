@@ -40,7 +40,7 @@ public class PlayerUI : MonoBehaviour {
 	void Update () {
 		SetStaminaAmount(controller.GetCurrentStaminaAmount(), controller.GetMaxStaminaAmount());
 		SetHealthAmount(player.GetCurrentHealth(), player.GetMaxHealth());
-		SetAmmoAmount(itemManager.GetCurrentItem().ammo, itemManager.GetCurrentItem().maxAmmo);
+		SetAmmoAmount(itemManager.GetCurrentItem().itemAmmo, itemManager.GetCurrentItem().itemMaxAmmo);
 
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			TogglePauseMenu();

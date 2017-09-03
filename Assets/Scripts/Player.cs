@@ -44,9 +44,10 @@ public class Player : NetworkBehaviour {
     private bool[] wasEnabledBeforeDeath;
     [SerializeField]
     private GameObject[] disableGameObjectsOnDeath;
-
-    [SyncVar]
+    
     private bool isFirstSetupOnClient = true;
+    [SyncVar]
+    private bool isAlreadyAnnounced = false;
 
     public void SetupPlayer() {
         if (isLocalPlayer) {
@@ -66,12 +67,14 @@ public class Player : NetworkBehaviour {
     private void RpcSetupPlayerOnAllClients() {
         // Store if components were enabled in wasEnabled[]
         if (isFirstSetupOnClient) {
-            GameManager.instance.onPlayerJoinedCallback(userName);
             wasEnabledBeforeDeath = new bool[disableComponentsOnDeath.Length];
             for (int i = 0; i < wasEnabledBeforeDeath.Length; i++) {
                 wasEnabledBeforeDeath[i] = disableComponentsOnDeath[i].enabled;
             }
-
+            if (!isAlreadyAnnounced) {
+                GameManager.instance.onPlayerJoinedCallback(userName);
+                isAlreadyAnnounced = true;
+            }
             isFirstSetupOnClient = false;
         }
         SetDefaults();

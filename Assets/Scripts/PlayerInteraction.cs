@@ -29,20 +29,20 @@ public class PlayerInteraction : NetworkBehaviour {
         if (PauseMenu.isPauseMenu) {
             return;
         }
-        if (currentItem.ammo < currentItem.maxAmmo) {
+        if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
             if (Input.GetButtonDown("Reload")) {
                 itemManager.Reload();
                 return;
             }
         }
-        if (currentItem.fireRate <= 0f) {
+        if (currentItem.itemFireRate <= 0f) {
             if (Input.GetButtonDown("Fire1")) {
                 Primary();
             }
         }
         else {
             if (Input.GetButtonDown("Fire1")) {
-                InvokeRepeating("Primary", 0f, 1 / currentItem.fireRate);
+                InvokeRepeating("Primary", 0f, 1 / currentItem.itemFireRate);
             }
             else if (Input.GetButtonUp("Fire1")) {
                 CancelInvoke("Primary");
@@ -57,23 +57,23 @@ public class PlayerInteraction : NetworkBehaviour {
             return;
         }
 
-        if (currentItem.ammo <= 0) {
+        if (currentItem.itemAmmo <= 0) {
             itemManager.Reload();
             return;
         }
 
-        currentItem.ammo--;
+        currentItem.itemAmmo--;
 
         // Call the OnPrimary method on the server
         CmdOnPrimary();
 
         RaycastHit _hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, currentItem.range, hitMask)) {
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, currentItem.itemRange, hitMask)) {
             // TODO: Differentiate hit effect and actions!
             // Something has been hit by clicking primary mouse button! 
             switch (_hit.collider.tag) {
                 case PLAYER_TAG:
-                    CmdPlayerShot(_hit.collider.name, currentItem.damage, transform.name);
+                    CmdPlayerShot(_hit.collider.name, currentItem.itemDamage, transform.name);
                     break;
                 default:
                     break;
