@@ -21,6 +21,7 @@ public class PlayerItem : MonoBehaviour {
     [HideInInspector]
     public int itemAmmo;
     #region Graphic Effects
+    [Header("Graphic Effects:")]
     [SerializeField]
     public ParticleSystem muzzleFlash;
     [SerializeField]
@@ -28,7 +29,8 @@ public class PlayerItem : MonoBehaviour {
     [SerializeField]
     public GameObject hitEffectPrefab;
     #endregion
-    #region Sounds
+    #region Sound Effects
+    [Header("Sound Effects:")]
     [SerializeField]
     public AudioSource primaryAudio;
     [SerializeField]

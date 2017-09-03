@@ -129,8 +129,9 @@ public class PlayerInteraction : NetworkBehaviour {
         if (_item == null) {
             return;
         }
-        _item.muzzleFlash.Play();
+        ParticleSystem _muzzleFlash = Instantiate(_item.muzzleFlash, _item.muzzleFlashPosition.position, Quaternion.LookRotation(_item.muzzleFlashPosition.position));
         AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
+        Destroy(_muzzleFlash, 0.5f);
     }
 
     // Is called on the server, when the primary mouse button action has hit something
@@ -150,6 +151,7 @@ public class PlayerInteraction : NetworkBehaviour {
         // Look into "object pooling"
         GameObject _hitEffect = Instantiate(_item.hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
         AudioSource.PlayClipAtPoint(_item.primaryImpactAudio.clip, _hitPosition, 0.5f);
+        Destroy(_hitEffect, 1f);
     }
 
     [Command]   // only called on the server!
