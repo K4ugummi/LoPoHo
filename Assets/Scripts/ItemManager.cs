@@ -9,17 +9,13 @@ public class ItemManager : NetworkBehaviour {
     [SerializeField]
 	private Transform itemHolder;
     private GameObject currentItemInstance;
-
-	//[SerializeField]
-	//private PlayerItem primaryItem;
+    
     [SerializeField]
     private PlayerItem[] items;
 
 	private PlayerItem currentItem;
     private int selectedItemIndex = 0;
-    private ItemGraphics currentItemGraphics;
-    private ItemSounds currentItemSounds;
-
+    [HideInInspector]
 	public bool isReloading = false;
 
 	void Start() { 
@@ -33,32 +29,6 @@ public class ItemManager : NetworkBehaviour {
             }
         }
 	}
-
-    //[Client]
-    //void Update() {
-    //    int _prevSelectedItemIndex = selectedItemIndex;
-
-    //    if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
-    //        if (selectedItemIndex >= items.Length - 1) {
-    //            selectedItemIndex = 0;
-    //        }
-    //        else {
-    //            selectedItemIndex++;
-    //        }
-    //    }
-    //    if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
-    //        if (selectedItemIndex <= 0) {
-    //            selectedItemIndex = items.Length - 1;
-    //        }
-    //        else {
-    //            selectedItemIndex--;
-    //        }
-    //    }
-
-    //    if (_prevSelectedItemIndex != selectedItemIndex) {
-    //        CmdOnEquipItem(selectedItemIndex);
-    //    }
-    //}
     
     [Command]
 	public void CmdOnEquipItem(int  _itemIndex) {
@@ -84,14 +54,14 @@ public class ItemManager : NetworkBehaviour {
         _itemInstance.transform.SetParent(itemHolder);
         currentItemInstance = _itemInstance;
 
-        currentItemGraphics = _itemInstance.GetComponent<ItemGraphics>();
-        if (currentItemGraphics == null) {
-            Debug.LogError("ItemManager: No ItemGraphics component on item " + _itemInstance.name + "!");
-        }
-        currentItemSounds = _itemInstance.GetComponent<ItemSounds>();
-        if (currentItemSounds == null) {
-            Debug.LogError("ItemManager: No ItemSounds component on item " + _itemInstance.name + "!");
-        }
+        //currentItemGraphics = _itemInstance.GetComponent<ItemGraphics>();
+        //if (currentItemGraphics == null) {
+        //    Debug.LogError("ItemManager: No ItemGraphics component on item " + _itemInstance.name + "!");
+        //}
+        //currentItemSounds = _itemInstance.GetComponent<ItemSounds>();
+        //if (currentItemSounds == null) {
+        //    Debug.LogError("ItemManager: No ItemSounds component on item " + _itemInstance.name + "!");
+        //}
         if (isLocalPlayer) {
             Util.SetLayerRecursively(_itemInstance, LayerMask.NameToLayer(PLAYER_ITEM_LAYER));
         }
@@ -126,7 +96,7 @@ public class ItemManager : NetworkBehaviour {
 
 	[ClientRpc]
 	void RpcOnReload ()	{
-		Animator _animator = currentItemGraphics.GetComponent<Animator>();
+		Animator _animator = currentItem.GetComponent<Animator>();
 		if (_animator != null) {
 			_animator.SetTrigger("Reload");
 		}
@@ -153,12 +123,8 @@ public class ItemManager : NetworkBehaviour {
         return "None";
     }
 
-    public ItemGraphics GetCurrentGraphics() {
-        return currentItemGraphics;
-    }
-
-    public ItemSounds GetCurrentSounds() {
-        return currentItemSounds;
-    }
+    //public ItemSounds GetCurrentSounds() {
+    //    return currentItemSounds;
+    //}
 
 }

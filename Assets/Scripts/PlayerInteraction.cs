@@ -125,9 +125,12 @@ public class PlayerInteraction : NetworkBehaviour {
     // Do on primary effect on all clients
     [ClientRpc]
     void RpcDoPrimaryEffect() {
-        itemManager.GetCurrentGraphics().muzzleFlash.Play();
-        //itemManager.GetCurrentSounds().primaryAudio.Play();
-        AudioSource.PlayClipAtPoint(itemManager.GetCurrentSounds().primaryAudio.clip, transform.position, 0.5f);
+        PlayerItem _item = itemManager.GetCurrentItem();
+        if (_item == null) {
+            return;
+        }
+        _item.muzzleFlash.Play();
+        AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
     }
 
     // Is called on the server, when the primary mouse button action has hit something
@@ -139,11 +142,14 @@ public class PlayerInteraction : NetworkBehaviour {
     // Do on primary hit effect on all clients
     [ClientRpc]
     void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+        PlayerItem _item = itemManager.GetCurrentItem();
+        if (_item == null) {
+            return;
+        }
         // TODO: Instantiation objects takes a lot of processing power
         // Look into "object pooling"
-        GameObject _hitEffect = Instantiate(itemManager.GetCurrentGraphics().hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
-        AudioSource.PlayClipAtPoint(itemManager.GetCurrentSounds().primaryImpactAudio.clip, _hitPosition, 0.5f);
-        Destroy(_hitEffect, 2f);
+        GameObject _hitEffect = Instantiate(_item.hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
+        AudioSource.PlayClipAtPoint(_item.primaryImpactAudio.clip, _hitPosition, 0.5f);
     }
 
     [Command]   // only called on the server!
