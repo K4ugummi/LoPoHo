@@ -28,6 +28,9 @@ public class RegisterControls : MonoBehaviour {
             else if (registerConfirmPassword.isFocused) {
                 registerName.Select();
             }
+            else {
+                registerName.Select();
+            }
         }
         
         if (Input.GetKeyDown(KeyCode.Return)) {

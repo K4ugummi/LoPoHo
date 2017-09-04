@@ -23,6 +23,9 @@ public class LoginControls : MonoBehaviour {
             else if (loginPassword.isFocused) {
                 loginName.Select();
             }
+            else {
+                loginName.Select();
+            }
         }
         
         if (Input.GetKeyDown(KeyCode.Return)) {
