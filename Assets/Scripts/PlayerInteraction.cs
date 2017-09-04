@@ -15,6 +15,8 @@ public class PlayerInteraction : NetworkBehaviour {
     private PlayerItem currentItem;
     private ItemManager itemManager;
 
+    private bool hasBeenEnabledNow;
+
     void Start() {
         if (cam == null) {
             Debug.LogError("Playershoot: No camera referenced!");
@@ -24,7 +26,18 @@ public class PlayerInteraction : NetworkBehaviour {
         itemManager = GetComponent<ItemManager>();
     }
 
+    void OnEnable () {
+        if (isLocalPlayer) {
+            hasBeenEnabledNow = true;
+        }
+    }
+
     void Update() {
+        if (hasBeenEnabledNow) {
+            hasBeenEnabledNow = false;
+            return;
+        }
+
         currentItem = itemManager.GetCurrentItem();
 
         if (PauseMenu.isPauseMenu) {
