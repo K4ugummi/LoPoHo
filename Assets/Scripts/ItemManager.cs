@@ -16,20 +16,22 @@ public class ItemManager : NetworkBehaviour {
 	private PlayerItem currentItem;
     private int selectedItemIndex = 0;
     [HideInInspector]
+    public int selectedItemGUIIndex = 0;
+    [HideInInspector]
 	public bool isReloading = false;
+    [HideInInspector]
+    public bool isItemChangedGuiFlag = true;
 
-	void Start() { 
+    void Start() { 
         if (!isLocalPlayer) {
             return;
         }
 		CmdOnEquipItem(0);
-        if (isLocalPlayer) {
-            foreach (PlayerItem _item in items) {
-                if (_item == null) {
-                    continue;
-                }
-                _item.SetWeaponAmmoToMax();
+        foreach (PlayerItem _item in items) {
+            if (_item == null) {
+                continue;
             }
+            _item.SetWeaponAmmoToMax();
         }
 	}
     
@@ -47,6 +49,10 @@ public class ItemManager : NetworkBehaviour {
         PlayerItem _item = items[_itemIndex];
 
         currentItem = _item;
+        if (isLocalPlayer) {
+            isItemChangedGuiFlag = true;
+            selectedItemGUIIndex = _itemIndex;
+        }
         if (currentItem == null) {
             return;
         }
@@ -115,8 +121,23 @@ public class ItemManager : NetworkBehaviour {
         return "None";
     }
 
-    //public ItemSounds GetCurrentSounds() {
-    //    return currentItemSounds;
-    //}
+    public string[] GetCurrentItemNames() {
+        string[] _result = new string[10];
+        int _i = 0;
+        foreach (PlayerItem _item in items) {
+            if (_item == null) {
+                _result[_i] = "None";
+            }
+            else {
+                _result[_i] = _item.itemName;
+            }
+            _i++;
+        }
+        return _result;
+    }
+
+    public int GetSelectedItemIndex() {
+        return selectedItemIndex;
+    }
 
 }

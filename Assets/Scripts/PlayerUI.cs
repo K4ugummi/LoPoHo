@@ -17,6 +17,8 @@ public class PlayerUI : MonoBehaviour {
     Text weaponText;
     [SerializeField]
 	Text ammoText;
+    [SerializeField]
+    GuiSelectableItem[] selectableItems;
 
 	[SerializeField]
 	GameObject pauseMenu;
@@ -42,6 +44,7 @@ public class PlayerUI : MonoBehaviour {
 	void Update () {
 		SetStaminaAmount(controller.GetCurrentStaminaAmount(), controller.GetMaxStaminaAmount());
 		SetHealthAmount(player.GetCurrentHealth(), player.GetMaxHealth());
+
         if (itemManager.GetCurrentItem() != null) {
             SetWeaponName(itemManager.GetCurrentItem().itemName);
             SetAmmoAmount(itemManager.GetCurrentItem().itemAmmo, itemManager.GetCurrentItem().itemMaxAmmo);
@@ -50,6 +53,7 @@ public class PlayerUI : MonoBehaviour {
             SetWeaponName("None");
             SetAmmoAmount(0, 0);
         }
+
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			TogglePauseMenu();
 		}
@@ -59,6 +63,11 @@ public class PlayerUI : MonoBehaviour {
         } else if (Input.GetKeyUp(KeyCode.Tab)) {
 			scoreboard.SetActive(false);
         }
+
+        if (itemManager.isItemChangedGuiFlag) {
+            RedrawSelectableItems();
+        }
+
 	}
 
 	public void TogglePauseMenu () {
@@ -96,5 +105,20 @@ public class PlayerUI : MonoBehaviour {
             ammoText.text = _amount.ToString() + " / " + _max.ToString();
         }
 	}
+
+    void RedrawSelectableItems() {
+        string[] _itemNames = itemManager.GetCurrentItemNames();
+        for (int i = 0; i < 10; i++) {
+            GuiSelectableItem _item = selectableItems[i];
+            _item.itemNameText.text = _itemNames[i];
+            Color _color = new Color(0f, 0f, 0f, 100f / 255f);
+            if (i == itemManager.selectedItemGUIIndex) { //191 131 0
+                _color.r = 191f/255f;
+                _color.g = 131f/255f;
+            }
+            _item.itemIsSelectedImage.color = _color;
+        }
+        itemManager.isItemChangedGuiFlag = false;
+    }
 
 }
