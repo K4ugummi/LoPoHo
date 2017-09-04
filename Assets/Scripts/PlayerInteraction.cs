@@ -162,13 +162,8 @@ public class PlayerInteraction : NetworkBehaviour {
             return;
         }
         // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //ParticleSystem _muzzleFlash = Instantiate(_item.muzzleFlash, _item.transform.position, Quaternion.LookRotation(Vector3.zero));
-        if (!_item.GetMuzzleFlash().isPlaying) {
-            Debug.Log("MuzzleFLash!");
-            _item.GetMuzzleFlash().Play();
-        }
+        _item.GetMuzzleFlash().Play();
         AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
-        //Destroy(_muzzleFlash, 0.5f);
     }
 
     // Is called on the server, when the primary mouse button action has hit something
