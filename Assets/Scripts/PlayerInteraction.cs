@@ -31,10 +31,6 @@ public class PlayerInteraction : NetworkBehaviour {
             return;
         }
         if (currentItem != null) {
-            Debug.Log("CurrentItem Muzzle Flash position " 
-                + currentItem.muzzleFlashPosition.transform.position.x + " " 
-                + currentItem.muzzleFlashPosition.transform.position.y + " " 
-                + currentItem.muzzleFlashPosition.transform.position.z + " " );
             if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
                 if (Input.GetButtonDown("Reload")) {
                     itemManager.Reload();
@@ -135,6 +131,7 @@ public class PlayerInteraction : NetworkBehaviour {
         }
         // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //ParticleSystem _muzzleFlash = Instantiate(_item.muzzleFlash, _item.transform.position, Quaternion.LookRotation(Vector3.zero));
+        _item.muzzleFlash.Play();
         AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
         //Destroy(_muzzleFlash, 0.5f);
     }

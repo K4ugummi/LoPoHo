@@ -25,8 +25,6 @@ public class PlayerItem : MonoBehaviour {
     [SerializeField]
     public ParticleSystem muzzleFlash;
     [SerializeField]
-    public Transform muzzleFlashPosition;
-    [SerializeField]
     public GameObject hitEffectPrefab;
     #endregion
     #region Sound Effects
