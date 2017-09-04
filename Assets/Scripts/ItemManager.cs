@@ -5,6 +5,7 @@ using System.Collections;
 public class ItemManager : NetworkBehaviour {
 
     private const string PLAYER_ITEM_LAYER = "PlayerItem";
+    private const string DEFAULT_LAYER = "Default";
 
     [SerializeField]
 	private Transform itemHolder;
@@ -62,6 +63,9 @@ public class ItemManager : NetworkBehaviour {
         currentItemInstance = _itemInstance;
         if (isLocalPlayer) {
             Util.SetLayerRecursively(_itemInstance, LayerMask.NameToLayer(PLAYER_ITEM_LAYER));
+        }
+        else {
+            Util.SetLayerRecursively(_itemInstance, LayerMask.NameToLayer(DEFAULT_LAYER));
         }
     }
 
