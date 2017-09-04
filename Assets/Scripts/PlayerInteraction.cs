@@ -51,7 +51,7 @@ public class PlayerInteraction : NetworkBehaviour {
                 }
             }
         }
-
+        #region Select Item
         int _prevSelectedItemIndex = selectedItemIndex;
         if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
             if (selectedItemIndex >= itemManager.GetItemsLength() - 1) {
@@ -60,6 +60,36 @@ public class PlayerInteraction : NetworkBehaviour {
             else {
                 selectedItemIndex++;
             }
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            selectedItemIndex = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            selectedItemIndex = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3)) {
+            selectedItemIndex = 2;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4)) {
+            selectedItemIndex = 3;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5)) {
+            selectedItemIndex = 4;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha6)) {
+            selectedItemIndex = 5;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha7)) {
+            selectedItemIndex = 6;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha8)) {
+            selectedItemIndex = 7;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha9)) {
+            selectedItemIndex = 8;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha0)) {
+            selectedItemIndex = 9;
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
             if (selectedItemIndex <= 0) {
@@ -73,7 +103,7 @@ public class PlayerInteraction : NetworkBehaviour {
         if (_prevSelectedItemIndex != selectedItemIndex) {
             SwitchItem(selectedItemIndex);
         }
-
+        #endregion
     }
     // FIRE1
     [Client]    // only called on the client!

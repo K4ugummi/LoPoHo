@@ -25,6 +25,9 @@ public class ItemManager : NetworkBehaviour {
 		CmdOnEquipItem(0);
         if (isLocalPlayer) {
             foreach (PlayerItem _item in items) {
+                if (_item == null) {
+                    continue;
+                }
                 _item.SetWeaponAmmoToMax();
             }
         }
@@ -43,11 +46,10 @@ public class ItemManager : NetworkBehaviour {
 
         PlayerItem _item = items[_itemIndex];
 
-        if (_item == null) {
-            Debug.LogError("ItemManager: Item with itemindex[" + _itemIndex + "] not found!");
-        }
-
         currentItem = _item;
+        if (currentItem == null) {
+            return;
+        }
 
         GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, itemHolder.rotation);
         _itemInstance.transform.SetParent(itemHolder);
