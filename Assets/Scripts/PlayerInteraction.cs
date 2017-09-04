@@ -131,7 +131,10 @@ public class PlayerInteraction : NetworkBehaviour {
         }
         // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //ParticleSystem _muzzleFlash = Instantiate(_item.muzzleFlash, _item.transform.position, Quaternion.LookRotation(Vector3.zero));
-        _item.muzzleFlash.Play();
+        if (!_item.GetMuzzleFlash().isPlaying) {
+            Debug.Log("MuzzleFLash!");
+            _item.GetMuzzleFlash().Play();
+        }
         AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
         //Destroy(_muzzleFlash, 0.5f);
     }

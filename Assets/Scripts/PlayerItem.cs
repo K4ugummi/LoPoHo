@@ -46,4 +46,8 @@ public class PlayerItem : MonoBehaviour {
     public void SetWeaponAmmoToMax() {
         itemAmmo = itemMaxAmmo;
     }
+
+    public ParticleSystem GetMuzzleFlash() {
+        return muzzleFlash;
+    }
 }

@@ -50,18 +50,8 @@ public class ItemManager : NetworkBehaviour {
         currentItem = _item;
 
         GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, itemHolder.rotation);
-        //GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, _item.transform.rotation);
         _itemInstance.transform.SetParent(itemHolder);
         currentItemInstance = _itemInstance;
-
-        //currentItemGraphics = _itemInstance.GetComponent<ItemGraphics>();
-        //if (currentItemGraphics == null) {
-        //    Debug.LogError("ItemManager: No ItemGraphics component on item " + _itemInstance.name + "!");
-        //}
-        //currentItemSounds = _itemInstance.GetComponent<ItemSounds>();
-        //if (currentItemSounds == null) {
-        //    Debug.LogError("ItemManager: No ItemSounds component on item " + _itemInstance.name + "!");
-        //}
         if (isLocalPlayer) {
             Util.SetLayerRecursively(_itemInstance, LayerMask.NameToLayer(PLAYER_ITEM_LAYER));
         }
