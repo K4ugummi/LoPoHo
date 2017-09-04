@@ -81,15 +81,15 @@ public class Player : NetworkBehaviour {
     }
 
 
-    // Testfunction to kill the player with shortcut "K"
-    //void Update() {
-    //    if (!isLocalPlayer) {
-    //        return;
-    //    }
-    //    if (Input.GetKeyDown(KeyCode.K)) {
-    //        RpcTakeDamage(99999, transform.name);
-    //    }
-    //}
+    //Testfunction to kill the player with shortcut "K"
+    void Update() {
+        if (!isLocalPlayer) {
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.K)) {
+            RpcTakeDamage(99999, transform.name);
+        }
+    }
 
     [ClientRpc]     // a method that is called on all clients
     public void RpcTakeDamage(int _dmg, string _sourceID) {
@@ -112,6 +112,8 @@ public class Player : NetworkBehaviour {
             GameManager.instance.onPlayerKilledCallback.Invoke(userName, _sourcePlayer.userName);
         }
         deaths++;
+
+        GetComponent<PlayerInteraction>().CancelAllActionsOnDeath();
 
         // Disable components
         for (int i = 0; i < disableComponentsOnDeath.Length; i++) {
