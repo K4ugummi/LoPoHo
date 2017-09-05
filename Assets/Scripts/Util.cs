@@ -31,4 +31,9 @@ public class Util {
     public static float GetValueInPct(float _amount, float _max) {
         return _amount / _max;
     }
+
+    public static void TakeScreenshot() {
+        string _dateTime = System.DateTime.Now.ToString("yyyyMMddHHmmss");
+        ScreenCapture.CaptureScreenshot(Application.dataPath + "screenshot_" + _dateTime + ".png");
+    }
 }

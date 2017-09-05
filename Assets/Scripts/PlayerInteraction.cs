@@ -25,6 +25,11 @@ public class PlayerInteraction : NetworkBehaviour {
     }
 
     void Update() {
+        if (Input.GetKeyDown(KeyCode.F12)) {
+            if (isLocalPlayer) {
+                Util.TakeScreenshot();
+            }
+        }
 
         currentItem = itemManager.GetCurrentItem();
 
