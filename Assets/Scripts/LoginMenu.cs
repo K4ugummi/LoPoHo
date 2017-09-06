@@ -25,6 +25,8 @@ public class LoginMenu : MonoBehaviour {
     //Called at the very start of the game
     void Awake() {
         ResetAllUIElements();
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     //Called by Button Pressed Methods to Reset UI Fields

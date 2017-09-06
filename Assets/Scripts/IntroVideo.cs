@@ -15,14 +15,12 @@ public class IntroVideo : MonoBehaviour {
 
     void Update() {
         if (Input.anyKey) {
-            Util.ShowCursor();
             async.allowSceneActivation = true;
         }
     }
 
     IEnumerator WaitAndLoad(float value) {
         yield return new WaitForSeconds(value);
-        Util.ShowCursor();
         async.allowSceneActivation = true;
     }
 }
