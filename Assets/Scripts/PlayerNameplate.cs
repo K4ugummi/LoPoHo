@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Player))]
 public class PlayerNameplate : MonoBehaviour {
 
 	[SerializeField]
-	private Text usernameText;
+	private TMP_Text usernameText;
 
 	[SerializeField]
 	private RectTransform healthBarFill;

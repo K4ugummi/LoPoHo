@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class GuiSelectableItem : MonoBehaviour {
 
     [SerializeField]
-    public Text itemNameText;
+    public TMP_Text itemNameText;
     [SerializeField]
     public Image itemIsSelectedImage;
 }

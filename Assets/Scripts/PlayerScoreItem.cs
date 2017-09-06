@@ -1,22 +1,23 @@
 ﻿using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class PlayerScoreItem : MonoBehaviour {
 
     [SerializeField]
-    Text userNameText;
+    TMP_Text userNameText;
     [SerializeField]
-    Text killsText;
+    TMP_Text killsText;
     [SerializeField]
-    Text deathsText;
+    TMP_Text deathsText;
     [SerializeField]
-    Text pingText;
+    TMP_Text pingText;
 
     public void Setup(string _userName, int _kills, int _deaths, int _ping) {
         userNameText.text = _userName;
-        killsText.text = "K: " + _kills.ToString();
-        deathsText.text = "D: " + _deaths.ToString();
-        pingText.text = "Ping: " + GetPingColored(_ping);
+        killsText.text = _kills.ToString();
+        deathsText.text = _deaths.ToString();
+        pingText.text = GetPingColored(_ping);
     }
 
     private string GetPingColored(int _ping) {

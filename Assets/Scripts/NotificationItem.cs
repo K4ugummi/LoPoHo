@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class NotificationItem : MonoBehaviour {
 
     [SerializeField]
-    Text notification;
+    TMP_Text notification;
 
     public void PlayerKilled(string _playerKilled, string _dmgSource) {
         if (_playerKilled != _dmgSource) {

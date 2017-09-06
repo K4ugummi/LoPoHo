@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour {
@@ -6,17 +7,17 @@ public class PlayerUI : MonoBehaviour {
 	[SerializeField]
 	RectTransform staminaBarFill;
     [SerializeField]
-    Text staminaText;
+    TMP_Text staminaText;
 	[SerializeField]
 	RectTransform healthBarFill;
     [SerializeField]
-    Text healthText;
+    TMP_Text healthText;
     [SerializeField]
     RectTransform ammoBarFill;
     [SerializeField]
-    Text weaponText;
+    TMP_Text weaponText;
     [SerializeField]
-	Text ammoText;
+    TMP_Text ammoText;
     [SerializeField]
     GuiSelectableItem[] selectableItems;
 

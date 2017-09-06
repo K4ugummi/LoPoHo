@@ -4,21 +4,25 @@ using System.Collections;
 
 public class IntroVideo : MonoBehaviour {
 
+    AsyncOperation async;
+
     void Start() {
         Util.HideCursor();
-        StartCoroutine(WaitAndLoad(7.7f, "LoginMenu"));
+        StartCoroutine(WaitAndLoad(7.7f));
+        async = SceneManager.LoadSceneAsync("LoginMenu");
+        async.allowSceneActivation = false;
     }
 
     void Update() {
         if (Input.anyKey) {
             Util.ShowCursor();
-            SceneManager.LoadScene("LoginMenu");
+            async.allowSceneActivation = true;
         }
     }
 
-    IEnumerator WaitAndLoad(float value, string scene) {
+    IEnumerator WaitAndLoad(float value) {
         yield return new WaitForSeconds(value);
         Util.ShowCursor();
-        SceneManager.LoadScene(scene);
+        async.allowSceneActivation = true;
     }
 }

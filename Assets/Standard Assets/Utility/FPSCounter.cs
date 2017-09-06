@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 namespace UnityStandardAssets.Utility
@@ -12,7 +13,7 @@ namespace UnityStandardAssets.Utility
         private float m_FpsNextPeriod = 0;
         private int m_CurrentFps;
         [SerializeField]
-        private Text m_Text;
+        private TMP_Text m_Text;
 
 
         private void Start()
