@@ -67,7 +67,7 @@ public class Player : NetworkBehaviour {
 
     IEnumerator UpdatePing() {
         while (true) {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
             if (isLocalPlayer) {
                 CmdSetCurrentRTT(networkManager.client.GetRTT());
             }
