@@ -67,34 +67,34 @@ public class PlayerInteraction : NetworkBehaviour {
                 selectedItemIndex++;
             }
         }
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        if (Input.GetButtonDown("Item1")) {
             selectedItemIndex = 0;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        if (Input.GetButtonDown("Item2")) {
             selectedItemIndex = 1;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3)) {
+        if (Input.GetButtonDown("Item3")) {
             selectedItemIndex = 2;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha4)) {
+        if (Input.GetButtonDown("Item4")) {
             selectedItemIndex = 3;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha5)) {
+        if (Input.GetButtonDown("Item5")) {
             selectedItemIndex = 4;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha6)) {
+        if (Input.GetButtonDown("Item6")) {
             selectedItemIndex = 5;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha7)) {
+        if (Input.GetButtonDown("Item7")) {
             selectedItemIndex = 6;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha8)) {
+        if (Input.GetButtonDown("Item8")) {
             selectedItemIndex = 7;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha9)) {
+        if (Input.GetButtonDown("Item9")) {
             selectedItemIndex = 8;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha0)) {
+        if (Input.GetButtonDown("Item10")) {
             selectedItemIndex = 9;
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
