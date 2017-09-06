@@ -55,7 +55,7 @@ public class PlayerUI : MonoBehaviour {
             SetAmmoAmount(0, 0);
         }
 
-		if (Input.GetKeyDown(KeyCode.Escape)) {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
 			TogglePauseMenu();
 		}
 
@@ -68,7 +68,6 @@ public class PlayerUI : MonoBehaviour {
         if (itemManager.isItemChangedGuiFlag) {
             RedrawSelectableItems();
         }
-
 	}
 
 	public void TogglePauseMenu () {

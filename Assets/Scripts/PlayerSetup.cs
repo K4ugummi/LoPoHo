@@ -73,10 +73,10 @@ public class PlayerSetup : NetworkBehaviour {
     {
         base.OnStartClient();
 
-        string _netId = GetComponent<NetworkIdentity>().netId.ToString();
+        string _netID = GetComponent<NetworkIdentity>().netId.ToString();
         Player _player = GetComponent<Player>();
 
-        GameManager.RegisterPlayer(_netId, _player);
+        GameManager.RegisterPlayer(_netID, _player);
     }
 
     // Called if the player is not the local player, and sets the layer according to it.

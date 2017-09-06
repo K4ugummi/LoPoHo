@@ -15,6 +15,8 @@ public class Player : NetworkBehaviour {
         protected set { _isDead = value; }
     }
 
+    private NetworkManager networkManager;
+
     [SerializeField]
     private float maxHealth = 100;
     [SyncVar]
@@ -27,12 +29,15 @@ public class Player : NetworkBehaviour {
         return maxHealth;
     }
 
+    private string netID;
     [SyncVar]
     public string userName = "Loading...";
     [SyncVar]
     public int kills;
     [SyncVar]
     public int deaths;
+    [SyncVar]
+    public int currentRTT;
 
     [SerializeField]
     GameObject deathParticleEffect;
@@ -51,11 +56,27 @@ public class Player : NetworkBehaviour {
 
     public void SetupPlayer() {
         if (isLocalPlayer) {
+            networkManager = NetworkManager.singleton;
             //Switch cameras
             GameManager.instance.SetSceneCameraActive(false);
             GetComponent<PlayerSetup>().playerUiInstance.SetActive(true);
+            StartCoroutine(UpdatePing());
         }
         CmdBroadcastNewPlayerSetup();
+    }
+
+    IEnumerator UpdatePing() {
+        while (true) {
+            yield return new WaitForSeconds(2f);
+            if (isLocalPlayer) {
+                CmdSetCurrentRTT(networkManager.client.GetRTT());
+            }
+        }
+    }
+
+    [Command]
+    private void CmdSetCurrentRTT(int _rtt) {
+        currentRTT = _rtt;
     }
 
     [Command]
@@ -80,16 +101,15 @@ public class Player : NetworkBehaviour {
         SetDefaults();
     }
 
-
-    //Testfunction to kill the player with shortcut "K"
-    void Update() {
-        if (!isLocalPlayer) {
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.K)) {
-            RpcTakeDamage(99999, transform.name);
-        }
-    }
+    ////Testfunction to kill the player with shortcut "K"
+    //void Update() {
+    //    if (!isLocalPlayer) {
+    //        return;
+    //    }
+    //    if (Input.GetKeyDown(KeyCode.K)) {
+    //        RpcTakeDamage(99999, transform.name);
+    //    }
+    //}
 
     [ClientRpc]     // a method that is called on all clients
     public void RpcTakeDamage(int _dmg, string _sourceID) {

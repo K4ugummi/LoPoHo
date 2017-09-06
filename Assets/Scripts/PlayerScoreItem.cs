@@ -20,6 +20,10 @@ public class PlayerScoreItem : MonoBehaviour {
         pingText.text = GetPingColored(_ping);
     }
 
+    void SetPing(int _ping) {
+        pingText.text = GetPingColored(_ping);
+    }
+
     private string GetPingColored(int _ping) {
         string _result = "<color=#";
         if (_ping < 25) {

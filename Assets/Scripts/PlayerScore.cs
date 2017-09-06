@@ -25,7 +25,7 @@ public class PlayerScore : MonoBehaviour {
     // Sync player data with the database
 	IEnumerator SyncScoreLoop() {
         while (true) {
-            yield return new WaitForSeconds(30f);
+            yield return new WaitForSeconds(10f);
 
             SyncNow();
         }
