@@ -48,7 +48,7 @@ public class PlayerUI : MonoBehaviour {
 
         if (itemManager.GetCurrentItem() != null) {
             SetWeaponName(itemManager.GetCurrentItem().itemName);
-            SetAmmoAmount(itemManager.GetCurrentItem().itemAmmo, itemManager.GetCurrentItem().itemMaxAmmo);
+            //SetAmmoAmount(itemManager.GetCurrentItem().itemAmmo, itemManager.GetCurrentItem().itemMaxAmmo);
         }
         else {
             SetWeaponName("None");

@@ -12,9 +12,9 @@ public class ItemManager : NetworkBehaviour {
     private GameObject currentItemInstance;
     
     [SerializeField]
-    private PlayerItem[] items;
+    private Item[] items;
 
-	private PlayerItem currentItem;
+	private Item currentItem;
     private int selectedItemIndex = 0;
     [HideInInspector]
     public int selectedItemGUIIndex = 0;
@@ -28,11 +28,11 @@ public class ItemManager : NetworkBehaviour {
             return;
         }
 		CmdOnEquipItem(0);
-        foreach (PlayerItem _item in items) {
+        foreach (Item _item in items) {
             if (_item == null) {
                 continue;
             }
-            _item.SetWeaponAmmoToMax();
+            //_item.SetWeaponAmmoToMax();
         }
 	}
     
@@ -47,7 +47,7 @@ public class ItemManager : NetworkBehaviour {
             Destroy(currentItemInstance);
         }
 
-        PlayerItem _item = items[_itemIndex];
+        Item _item = items[_itemIndex];
 
         currentItem = _item;
         if (isLocalPlayer) {
@@ -69,52 +69,52 @@ public class ItemManager : NetworkBehaviour {
         }
     }
 
-    public void Reload() {
-        if (isReloading) {
-            return;
-        }
+    //public void Reload() {
+    //    if (isReloading) {
+    //        return;
+    //    }
 
-		StartCoroutine(ReloadCoroutine());
-	}
+    //    StartCoroutine(ReloadCoroutine());
+    //}
 
-	private IEnumerator ReloadCoroutine() {
-		Debug.Log("Reloading...");
+    //private IEnumerator ReloadCoroutine() {
+    //    Debug.Log("Reloading...");
 
-		isReloading = true;
+    //    isReloading = true;
 
-		CmdOnReload();
+    //    CmdOnReload();
 
-		yield return new WaitForSeconds(currentItem.itemReloadTime);
+    //    yield return new WaitForSeconds(currentItem.itemReloadTime);
 
-		currentItem.itemAmmo = currentItem.itemMaxAmmo;
+    //    currentItem.itemAmmo = currentItem.itemMaxAmmo;
 
-		isReloading = false;
-	}
+    //    isReloading = false;
+    //}
 
-	[Command]
-	void CmdOnReload () {
-		RpcOnReload();
-	}
+    //[Command]
+    //void CmdOnReload() {
+    //    RpcOnReload();
+    //}
 
-	[ClientRpc]
-	void RpcOnReload ()	{
-		Animator _animator = currentItem.GetComponent<Animator>();
-		if (_animator != null) {
-			_animator.SetTrigger("Reload");
-		}
-    }
+    //[ClientRpc]
+    //void RpcOnReload() {
+    //    Animator _animator = currentItem.GetComponent<Animator>();
+    //    if (_animator != null) {
+    //        _animator.SetTrigger("Reload");
+    //    }
+    //}
 
-    public void ResetAmmo() {
-        if (currentItem != null) {
-            currentItem.itemAmmo = currentItem.itemMaxAmmo;
-        }
-    }
+    //public void ResetAmmo() {
+    //    if (currentItem != null) {
+    //        currentItem.itemAmmo = currentItem.itemMaxAmmo;
+    //    }
+    //}
 
     public int GetItemsLength() {
         return items.Length;
     }
 
-    public PlayerItem GetCurrentItem() {
+    public Item GetCurrentItem() {
         return currentItem;
     }
 
@@ -128,7 +128,7 @@ public class ItemManager : NetworkBehaviour {
     public string[] GetCurrentItemNames() {
         string[] _result = new string[10];
         int _i = 0;
-        foreach (PlayerItem _item in items) {
+        foreach (Item _item in items) {
             if (_item == null) {
                 _result[_i] = "None";
             }

@@ -12,7 +12,7 @@ public class PlayerInteraction : NetworkBehaviour {
     private LayerMask hitMask;
 
     private int selectedItemIndex = 0;
-    private PlayerItem currentItem;
+    private Item currentItem;
     private ItemManager itemManager;
 
     void Start() {
@@ -36,27 +36,36 @@ public class PlayerInteraction : NetworkBehaviour {
         if (PauseMenu.isPauseMenu) {
             return;
         }
+        #region Item Action
         if (currentItem != null) {
-            if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
-                if (Input.GetButtonDown("Reload")) {
-                    itemManager.Reload();
-                    return;
-                }
+            //if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
+            //    if (Input.GetButtonDown("Reload")) {
+            //        itemManager.Reload();
+            //        return;
+            //    }
+            //}
+            //if (currentItem.itemFireRate <= 0f) {
+            //    if (Input.GetButtonDown("MousePrimary")) {
+            //        Primary();
+            //    }
+            //}
+            //else {
+            //    if (Input.GetButtonDown("MousePrimary")) {
+            //        InvokeRepeating("Primary", 0f, 1 / currentItem.itemFireRate);
+            //    }
+            //    else if (Input.GetButtonUp("MousePrimary")) {
+            //        CancelInvoke("Primary");
+            //    }
+            //}
+
+            if (Input.GetButtonDown("MousePrimary")) {
+                Debug.Log("MousePrimary pressed!");
+                VisItemPrimary _visItemPrimary = new VisItemPrimary();
+                currentItem.Accept(_visItemPrimary);
             }
-            if (currentItem.itemFireRate <= 0f) {
-                if (Input.GetButtonDown("Fire1")) {
-                    Primary();
-                }
-            }
-            else {
-                if (Input.GetButtonDown("Fire1")) {
-                    InvokeRepeating("Primary", 0f, 1 / currentItem.itemFireRate);
-                }
-                else if (Input.GetButtonUp("Fire1")) {
-                    CancelInvoke("Primary");
-                }
-            }
+
         }
+        #endregion
         #region Select Item
         int _prevSelectedItemIndex = selectedItemIndex;
         if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
@@ -67,6 +76,7 @@ public class PlayerInteraction : NetworkBehaviour {
                 selectedItemIndex++;
             }
         }
+        #region ItemSelect
         if (Input.GetButtonDown("Item1")) {
             selectedItemIndex = 0;
         }
@@ -97,6 +107,7 @@ public class PlayerInteraction : NetworkBehaviour {
         if (Input.GetButtonDown("Item10")) {
             selectedItemIndex = 9;
         }
+        #endregion
         if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
             if (selectedItemIndex <= 0) {
                 selectedItemIndex = itemManager.GetItemsLength() - 1;
@@ -112,38 +123,6 @@ public class PlayerInteraction : NetworkBehaviour {
         }
         #endregion
     }
-    // FIRE1
-    [Client]    // only called on the client!
-    void Primary() {
-
-        if (!isLocalPlayer || itemManager.isReloading) {
-            return;
-        }
-        currentItem.itemAmmo--;
-
-        // Call the OnPrimary method on the server
-        CmdOnPrimary();
-
-        if (currentItem.itemAmmo <= 0) {
-            itemManager.Reload();
-            return;
-        }
-
-        RaycastHit _hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, currentItem.itemRange, hitMask)) {
-            // TODO: Differentiate hit effect and actions!
-            // Something has been hit by clicking primary mouse button! 
-            // Spawn the on hit effect on the server
-            CmdOnPrimaryHit(_hit.point, _hit.normal);
-            switch (_hit.collider.tag) {
-                case PLAYER_TAG:
-                    CmdOnPlayerShot(_hit.collider.name, currentItem.itemDamage, transform.name);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
 
     [Client]
     void SwitchItem(int _itemIndex) {
@@ -153,49 +132,49 @@ public class PlayerInteraction : NetworkBehaviour {
         itemManager.CmdOnEquipItem(selectedItemIndex);
     }
 
-    // Is called on the server, when a player uses his primary mouse button
-    [Command]
-    void CmdOnPrimary() {
-        RpcDoPrimaryEffect();
-    }
+    //// Is called on the server, when a player uses his primary mouse button
+    //[Command]
+    //void CmdOnPrimary() {
+    //    RpcDoPrimaryEffect();
+    //}
 
-    // Do on primary effect on all clients
-    [ClientRpc]
-    void RpcDoPrimaryEffect() {
-        PlayerItem _item = itemManager.GetCurrentItem();
-        if (_item == null) {
-            return;
-        }
-        // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        _item.GetMuzzleFlash().Play();
-        AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
-    }
+    //// Do on primary effect on all clients
+    //[ClientRpc]
+    //void RpcDoPrimaryEffect() {
+    //    PlayerItem _item = itemManager.GetCurrentItem();
+    //    if (_item == null) {
+    //        return;
+    //    }
+    //    // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //    _item.GetMuzzleFlash().Play();
+    //    AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
+    //}
 
-    // Is called on the server, when the primary mouse button action has hit something
-    [Command]
-    void CmdOnPrimaryHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
-        RpcDoPrimaryHitEffect(_hitPosition, _normalOfSurface);
-    }
+    //// Is called on the server, when the primary mouse button action has hit something
+    //[Command]
+    //void CmdOnPrimaryHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+    //    RpcDoPrimaryHitEffect(_hitPosition, _normalOfSurface);
+    //}
 
-    // Do on primary hit effect on all clients
-    [ClientRpc]
-    void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
-        PlayerItem _item = itemManager.GetCurrentItem();
-        if (_item == null) {
-            return;
-        }
-        // TODO: Instantiation objects takes a lot of processing power
-        // Look into "object pooling"
-        GameObject _hitEffect = Instantiate(_item.hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
-        AudioSource.PlayClipAtPoint(_item.primaryImpactAudio.clip, _hitPosition, 0.5f);
-        Destroy(_hitEffect, 1f);
-    }
+    //// Do on primary hit effect on all clients
+    //[ClientRpc]
+    //void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+    //    PlayerItem _item = itemManager.GetCurrentItem();
+    //    if (_item == null) {
+    //        return;
+    //    }
+    //    // TODO: Instantiation objects takes a lot of processing power
+    //    // Look into "object pooling"
+    //    GameObject _hitEffect = Instantiate(_item.hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
+    //    AudioSource.PlayClipAtPoint(_item.primaryImpactAudio.clip, _hitPosition, 0.5f);
+    //    Destroy(_hitEffect, 1f);
+    //}
 
-    [Command]   // only called on the server!
-    void CmdOnPlayerShot(string _playerID, int _damage, string _sourceID) {
-        Player _player = GameManager.GetPlayer(_playerID);
-        _player.RpcTakeDamage(_damage, _sourceID);
-    } 
+    //[Command]   // only called on the server!
+    //void CmdOnPlayerShot(string _playerID, int _damage, string _sourceID) {
+    //    Player _player = GameManager.GetPlayer(_playerID);
+    //    _player.RpcTakeDamage(_damage, _sourceID);
+    //} 
 
     public void CancelAllActionsOnDeath() {
         if (!isLocalPlayer) {

@@ -111,8 +111,20 @@ public class Player : NetworkBehaviour {
     //    }
     //}
 
+    //[ClientRpc]     // a method that is called on all clients
+    //public void RpcTakeDamage(int _dmg, string _sourceID) {
+    //    if (isDead) {
+    //        return;
+    //    }
+    //    currentHealth -= _dmg;
+
+    //    if (currentHealth <= Mathf.Epsilon) {
+    //        Die(_sourceID);
+    //    }
+    //}
+
     [ClientRpc]     // a method that is called on all clients
-    public void RpcTakeDamage(int _dmg, string _sourceID) {
+    public void RpcTakeDamage(float _dmg, string _sourceID) {
         if (isDead) {
             return;
         }
@@ -186,7 +198,7 @@ public class Player : NetworkBehaviour {
 
         // TODO: check if this is only set on local player
         GetComponent<PlayerController>().ResetStamina();
-        GetComponent<ItemManager>().ResetAmmo();
+        //GetComponent<ItemManager>().ResetAmmo();
 
 
         // (Re-)Enable components.
