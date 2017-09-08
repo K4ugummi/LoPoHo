@@ -1,6 +1,10 @@
 using UnityEngine;
+using System.Net;
+using System.IO;
 
 public class Util {
+
+    private const int CURRENT_VERSION = 170906;
 
 	public static void SetLayerRecursively(GameObject _obj, int _newLayer) {
         if (_obj == null) {
@@ -35,5 +39,20 @@ public class Util {
     public static void TakeScreenshot() {
         string _dateTime = System.DateTime.Now.ToString("yyyyMMddHHmmss");
         ScreenCapture.CaptureScreenshot(Application.dataPath + "screenshot_" + _dateTime + ".png");
+    }
+
+    public static bool CheckNewVersionOnline() {
+        WebClient _client = new WebClient();
+        Stream _stream = _client.OpenRead("http://schauerte.online/wp-content/uploads/2017/09/version.txt");
+        StreamReader _reader = new StreamReader(_stream);
+        string _content = _reader.ReadToEnd();
+        int _version;
+        int.TryParse(_content, out _version);
+        if (_version != CURRENT_VERSION) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }

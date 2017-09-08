@@ -10,6 +10,7 @@ public class LoginMenu : MonoBehaviour {
     public GameObject loginParent;
     public GameObject registerParent;
     public GameObject loadingParent;
+    public GameObject newVersionParent;
 
     //These are all the InputFields which we need in order to get the entered usernames, passwords, etc
     public InputField Login_UsernameField;
@@ -27,6 +28,12 @@ public class LoginMenu : MonoBehaviour {
         ResetAllUIElements();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+
+    void Start () {
+        if (!Util.CheckNewVersionOnline()) {
+            newVersionParent.gameObject.SetActive(true);
+        }
     }
 
     //Called by Button Pressed Methods to Reset UI Fields
