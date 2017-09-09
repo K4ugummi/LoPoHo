@@ -15,9 +15,8 @@ public class ItemManager : NetworkBehaviour {
     private Item[] items;
 
 	private Item currentItem;
-    private int selectedItemIndex = 0;
     [HideInInspector]
-    public int selectedItemGUIIndex = 0;
+    public int selectedItemIndex = 0;
     [HideInInspector]
 	public bool isReloading = false;
     [HideInInspector]
@@ -31,6 +30,7 @@ public class ItemManager : NetworkBehaviour {
             if (_item == null) {
                 continue;
             }
+            ((ItemWeapon)_item).weaponCurClipSize = ((ItemWeapon)_item).weaponMaxClipSize;
         }
         CmdOnEquipItem(0);
 	}
@@ -43,6 +43,9 @@ public class ItemManager : NetworkBehaviour {
     [ClientRpc]
     void RpcOnEquipItem(int _itemIndex) {
         if (currentItemInstance != null) {
+            if (isLocalPlayer) {
+                ((ItemWeapon)items[selectedItemIndex]).weaponCurClipSize = ((ItemWeapon)currentItemInstance.GetComponent<Item>()).weaponCurClipSize;
+            }
             Destroy(currentItemInstance);
         }
 
@@ -50,7 +53,7 @@ public class ItemManager : NetworkBehaviour {
         currentItem = _item;
         if (isLocalPlayer) {
             isItemChangedGuiFlag = true;
-            selectedItemGUIIndex = _itemIndex;
+            selectedItemIndex = _itemIndex;
         }
         if (currentItem == null) {
             return;

@@ -18,9 +18,8 @@ public class PlayerUI : MonoBehaviour {
     TMP_Text weaponText;
     [SerializeField]
     TMP_Text ammoText;
-    [HideInInspector]
+    [SerializeField]
     GuiSelectableItem[] selectableItems;
-
 	[SerializeField]
 	GameObject pauseMenu;
 	[SerializeField]
@@ -134,7 +133,7 @@ public class PlayerUI : MonoBehaviour {
             GuiSelectableItem _item = selectableItems[i];
             _item.itemNameText.text = _itemNames[i];
             Color _color = new Color(0f, 0f, 0f, 100f / 255f);
-            if (i == itemManager.selectedItemGUIIndex) { //191 131 0
+            if (i == itemManager.selectedItemIndex) { //191 131 0
                 _color.r = 191f/255f;
                 _color.g = 131f/255f;
             }

@@ -107,7 +107,7 @@ public class PlayerInteraction : NetworkBehaviour {
         }
 
         if (_prevSelectedItemIndex != selectedItemIndex) {
-            itemManager.selectedItemGUIIndex = selectedItemIndex;
+            //itemManager.selectedItemIndex = selectedItemIndex;
             SwitchItem(selectedItemIndex);
         }
         #endregion
