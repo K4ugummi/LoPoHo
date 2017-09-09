@@ -26,15 +26,19 @@ public class PlayerUI : MonoBehaviour {
 	GameObject scoreboard;
     [SerializeField]
     GameObject inventory;
+    [SerializeField]
+    public GameObject crosshairInteractable;
 
 	private Player player;
 	private PlayerController controller;
 	private ItemManager itemManager;
+    private PlayerInteraction playerInteraction;
 
 	public void SetPlayer (Player _player) {
 		player = _player;
 		controller = player.GetComponent<PlayerController>();
 		itemManager = player.GetComponent<ItemManager>();
+        playerInteraction = player.GetComponent<PlayerInteraction>();
 	}
 
 	void Start () {
@@ -75,6 +79,13 @@ public class PlayerUI : MonoBehaviour {
 
         if (itemManager.isItemChangedGuiFlag) {
             RedrawSelectableItems();
+        }
+
+        if (playerInteraction.GetCanInteract()) {
+            crosshairInteractable.SetActive(true);
+        }
+        else {
+            crosshairInteractable.SetActive(false);
         }
 	}
 
@@ -141,5 +152,4 @@ public class PlayerUI : MonoBehaviour {
         }
         itemManager.isItemChangedGuiFlag = false;
     }
-
 }

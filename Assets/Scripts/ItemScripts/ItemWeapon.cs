@@ -46,7 +46,7 @@ public class ItemWeapon : Item {
     void Start() {
         playerInteraction = GetComponentInParent<PlayerInteraction>();
         if (playerInteraction == null) {
-            Debug.LogError("ItemWeapon: playerInteraction == null!");
+            Debug.LogError("ItemWeapon: playerInteraction component not found!");
         }
     }
 
@@ -94,7 +94,6 @@ public class ItemWeapon : Item {
             // TODO: Differentiate hit effect and actions!
             // Something has been hit by clicking primary mouse button! 
             // Spawn the on hit effect on the server
-            Debug.Log("Shot hit: " + _hit.collider.name);
             playerInteraction.OnPrimaryWeaponHit(_hit.point, _hit.normal);
             switch (_hit.collider.tag) {
                 case PLAYER_TAG:
@@ -114,16 +113,10 @@ public class ItemWeapon : Item {
     }
 
     private IEnumerator ReloadCoroutine() {
-        Debug.Log("Reloading...");
-
         isReloading = true;
-
         playerInteraction.OnReloadWeapon();
-
         yield return new WaitForSeconds(weaponReloadTime);
-
         weaponCurClipSize = weaponMaxClipSize;
-
         isReloading = false;
     }
 

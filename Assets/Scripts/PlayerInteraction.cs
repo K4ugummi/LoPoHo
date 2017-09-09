@@ -6,23 +6,26 @@ public class PlayerInteraction : NetworkBehaviour {
 
     private const string PLAYER_TAG = "Player";
     private const string PLAYER_ITEM_LAYER = "PlayerItem";
+    private const float INTERACTABLE_RANGE = 5f;
 
     [SerializeField]
     public Camera cam;
     [SerializeField]
     private LayerMask hitMask;
+    [SerializeField]
+    private LayerMask interactableMask;
 
     private int selectedItemIndex = 0;
     private Item currentItem;
     private GameObject currentItemInstance;
     private ItemManager itemManager;
+    private bool canInteractWithObject = false;
 
     void Start() {
         if (cam == null) {
             Debug.LogError("Playershoot: No camera referenced!");
             this.enabled = false;
         }
-
         itemManager = GetComponent<ItemManager>();
     }
 
@@ -37,9 +40,9 @@ public class PlayerInteraction : NetworkBehaviour {
         if (Inventory.isInventory) {
             return;
         }
-        #region Item Action
         currentItem = itemManager.GetCurrentItem();
         if (isLocalPlayer) {
+            #region Item Action
             if (currentItem != null) {
                 if (Input.GetButtonDown("Reload")) {
                     VisItemReload _visItemReload = new VisItemReload();
@@ -55,8 +58,23 @@ public class PlayerInteraction : NetworkBehaviour {
                     currentItem.Accept(_visItemPrimaryUp);
                 }
             }
+            #endregion
+            #region Interactable Objects
+            RaycastHit _hitInteractable;
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hitInteractable, INTERACTABLE_RANGE, interactableMask)) {
+                canInteractWithObject = true;
+            }
+            else {
+                canInteractWithObject = false;
+            }
+            if (canInteractWithObject && Input.GetKeyDown(KeyCode.E)) {
+                InteractableObject _interactable = _hitInteractable.collider.GetComponent<InteractableObject>();
+                if (_interactable != null) {
+                    Debug.Log("Interacting with " + _hitInteractable.collider.transform.name);
+                }
+            }
+            #endregion
         }
-        #endregion
         #region Select Item
         int _prevSelectedItemIndex = selectedItemIndex;
         if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
@@ -119,6 +137,10 @@ public class PlayerInteraction : NetworkBehaviour {
             return;
         }
         itemManager.CmdOnEquipItem(selectedItemIndex);
+    }
+
+    public bool GetCanInteract() {
+        return canInteractWithObject;
     }
 
     #region Weapon Actions
