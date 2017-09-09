@@ -56,7 +56,9 @@ public class ItemWeapon : Item {
             Primary();
         }
         else {
-            InvokeRepeating("Primary", 0f, 1 / weaponFireRate);
+            if (!IsInvoking("Primary")) {
+                InvokeRepeating("Primary", 0f, 1 / weaponFireRate);
+            }
         }
     }
     public override void Accept(VisItemReload _vis) {
@@ -74,30 +76,29 @@ public class ItemWeapon : Item {
 
     #endregion
     #region Primary
-    //[Client]
     void Primary() {
         if (isReloading) {
             return;
         }
         else if (weaponCurClipSize <= 0) {
-            playerInteraction.CmdDoPrimaryWeaponEmptyClipEffect();
+            playerInteraction.DoPrimaryWeaponEmptyClipEffect();
             CancelInvoke("Primary");
             return;
         }
 
         weaponCurClipSize--;
         // Call the OnPrimary method on the server
-        playerInteraction.CmdOnPrimaryWeapon();
+        playerInteraction.OnPrimaryWeapon();
         RaycastHit _hit;
         if (Physics.Raycast(playerInteraction.cam.transform.position, playerInteraction.cam.transform.forward, out _hit, weaponRange, hitMask)) {
             // TODO: Differentiate hit effect and actions!
             // Something has been hit by clicking primary mouse button! 
             // Spawn the on hit effect on the server
             Debug.Log("Shot hit: " + _hit.collider.name);
-            playerInteraction.CmdOnPrimaryWeaponHit(_hit.point, _hit.normal);
+            playerInteraction.OnPrimaryWeaponHit(_hit.point, _hit.normal);
             switch (_hit.collider.tag) {
                 case PLAYER_TAG:
-                    playerInteraction.CmdOnPlayerShotWithWeapon(_hit.collider.name, weaponDamage, transform.name);
+                    playerInteraction.OnPlayerShotWithWeapon(_hit.collider.name, weaponDamage, GetComponentInParent<Player>().transform.name);
                     break;
                 default:
                     break;
@@ -117,7 +118,7 @@ public class ItemWeapon : Item {
 
         isReloading = true;
 
-        playerInteraction.CmdOnReloadWeapon();
+        playerInteraction.OnReloadWeapon();
 
         yield return new WaitForSeconds(weaponReloadTime);
 

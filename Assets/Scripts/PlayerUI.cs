@@ -4,12 +4,12 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour {
 
-	[SerializeField]
-	RectTransform staminaBarFill;
+    [SerializeField]
+    RectTransform staminaBarFill;
     [SerializeField]
     TMP_Text staminaText;
-	[SerializeField]
-	RectTransform healthBarFill;
+    [SerializeField]
+    RectTransform healthBarFill;
     [SerializeField]
     TMP_Text healthText;
     [SerializeField]
@@ -18,14 +18,15 @@ public class PlayerUI : MonoBehaviour {
     TMP_Text weaponText;
     [SerializeField]
     TMP_Text ammoText;
-    [SerializeField]
+    [HideInInspector]
     GuiSelectableItem[] selectableItems;
 
 	[SerializeField]
 	GameObject pauseMenu;
-
 	[SerializeField]
 	GameObject scoreboard;
+    [SerializeField]
+    GameObject inventory;
 
 	private Player player;
 	private PlayerController controller;
@@ -39,7 +40,9 @@ public class PlayerUI : MonoBehaviour {
 
 	void Start () {
 		PauseMenu.isPauseMenu = false;
+        Inventory.isInventory = false;
         pauseMenu.SetActive(false);
+        inventory.SetActive(false);
     }
 
 	void Update () {
@@ -67,6 +70,10 @@ public class PlayerUI : MonoBehaviour {
 			scoreboard.SetActive(false);
         }
 
+        if (Input.GetKeyDown(KeyCode.I)) {
+            ToggleInventory();
+        }
+
         if (itemManager.isItemChangedGuiFlag) {
             RedrawSelectableItems();
         }
@@ -80,6 +87,19 @@ public class PlayerUI : MonoBehaviour {
         }
         else {
             Util.HideCursor();
+        }
+    }
+
+    public void ToggleInventory() {
+        inventory.SetActive(!inventory.activeSelf);
+        Inventory.isInventory = inventory.activeSelf;
+        if (Inventory.isInventory) {
+            Util.ShowCursor();
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else {
+            Util.HideCursor();
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

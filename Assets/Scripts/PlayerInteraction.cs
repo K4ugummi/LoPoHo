@@ -26,51 +26,35 @@ public class PlayerInteraction : NetworkBehaviour {
         itemManager = GetComponent<ItemManager>();
     }
 
+    [Client]
     void Update() {
-        currentItemInstance = itemManager.GetCurrentItemInstance();
         if (Input.GetKeyDown(KeyCode.F12)) {
             Util.TakeScreenshot();
         }
         if (PauseMenu.isPauseMenu) {
             return;
         }
+        if (Inventory.isInventory) {
+            return;
+        }
         #region Item Action
-        if (currentItemInstance != null) {
-            currentItem = currentItemInstance.GetComponent<Item>();
-            //if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
-            //    if (Input.GetButtonDown("Reload")) {
-            //        itemManager.Reload();
-            //        return;
-            //    }
-            //}
-            //if (currentItem.itemFireRate <= 0f) {
-            //    if (Input.GetButtonDown("MousePrimary")) {
-            //        Primary();
-            //    }
-            //}
-            //else {
-            //    if (Input.GetButtonDown("MousePrimary")) {
-            //        InvokeRepeating("Primary", 0f, 1 / currentItem.itemFireRate);
-            //    }
-            //    else if (Input.GetButtonUp("MousePrimary")) {
-            //        CancelInvoke("Primary");
-            //    }
-            //}
-            if (Input.GetButtonDown("Reload")) {
-                VisItemReload _visItemReload = new VisItemReload();
-                currentItem.Accept(_visItemReload);
-            }
+        currentItem = itemManager.GetCurrentItem();
+        if (isLocalPlayer) {
+            if (currentItem != null) {
+                if (Input.GetButtonDown("Reload")) {
+                    VisItemReload _visItemReload = new VisItemReload();
+                    currentItem.Accept(_visItemReload);
+                }
 
-            if (Input.GetButtonDown("MousePrimary")) {
-                VisItemPrimaryDown _visItemPrimaryDown = new VisItemPrimaryDown();
-                currentItem.Accept(_visItemPrimaryDown);
-                //CmdOnPrimary(_visItemPrimaryDown);
+                if (Input.GetButtonDown("MousePrimary")) {
+                    VisItemPrimaryDown _visItemPrimaryDown = new VisItemPrimaryDown();
+                    currentItem.Accept(_visItemPrimaryDown);
+                }
+                else if (Input.GetButtonUp("MousePrimary")) {
+                    VisItemPrimaryUp _visItemPrimaryUp = new VisItemPrimaryUp();
+                    currentItem.Accept(_visItemPrimaryUp);
+                }
             }
-            else if (Input.GetButtonUp("MousePrimary")) {
-                VisItemPrimaryUp _visItemPrimaryUp = new VisItemPrimaryUp();
-                currentItem.Accept(_visItemPrimaryUp);
-            }
-
         }
         #endregion
         #region Select Item
@@ -137,60 +121,63 @@ public class PlayerInteraction : NetworkBehaviour {
         itemManager.CmdOnEquipItem(selectedItemIndex);
     }
 
+    #region Weapon Actions
+    #region Entrance For Weapons
     [Client]
-    void Primary() {
-        VisItemPrimaryDown _visItemPrimaryDown = new VisItemPrimaryDown();
-        currentItem.Accept(_visItemPrimaryDown);
+    public void OnPrimaryWeapon() {
+        if (!isLocalPlayer) {
+            return;
+        }
+        CmdOnPrimaryWeapon();
     }
-
-    #region Weapon
+    [Client]
+    public void DoPrimaryWeaponEmptyClipEffect() {
+        if (!isLocalPlayer) {
+            return;
+        }
+        CmdDoPrimaryWeaponEmptyClipEffect();
+    }
+    [Client]
+    public void OnPrimaryWeaponHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+        if (!isLocalPlayer) {
+            return;
+        }
+        CmdOnPrimaryWeaponHit(_hitPosition, _normalOfSurface);
+    }
+    [Client]
+    public void OnReloadWeapon() {
+        if (!isLocalPlayer) {
+            return;
+        }
+        CmdOnReloadWeapon();
+    }
+    [Client]
+    public void OnPlayerShotWithWeapon(string _playerID, float _damage, string _sourceID) {
+        if (!isLocalPlayer) {
+            return;
+        }
+        CmdOnPlayerShotWithWeapon(_playerID, _damage, _sourceID);
+    }
+    #endregion
+    #region Commands
     [Command]
-    public void CmdOnPrimaryWeapon() {
+    void CmdOnPrimaryWeapon() {
         RpcDoPrimaryWeaponEffect();
     }
     [Command]
-    public void CmdDoPrimaryWeaponEmptyClipEffect() {
+    void CmdDoPrimaryWeaponEmptyClipEffect() {
         RpcDoPrimaryWeaponEmptyClipEffect();
     }
     [Command]
-    public void CmdOnPrimaryWeaponHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+    void CmdOnPrimaryWeaponHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
         RpcDoPrimaryHitEffect(_hitPosition, _normalOfSurface);
     }
     [Command]
-    public void CmdOnReloadWeapon() {
+    void CmdOnReloadWeapon() {
         RpcOnReloadWeapon();
     }
-
-    // Do on primary effect on all clients
-    [ClientRpc]
-    void RpcDoPrimaryWeaponEffect() {
-        // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //_item.GetMuzzleFlash().Play();
-        GameObject _muzzleFlash = Instantiate(((ItemWeapon)currentItem).muzzleFlash, ((ItemWeapon)currentItem).actionOrigin.position, Quaternion.LookRotation(((ItemWeapon)currentItem).actionOrigin.position));
-        if (isLocalPlayer) {
-            _muzzleFlash.layer = LayerMask.NameToLayer(PLAYER_ITEM_LAYER);
-        }
-        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).primaryAudio.clip, currentItem.transform.position, 0.5f);
-        Destroy(_muzzleFlash, 1f);
-    }
-
-    [ClientRpc]
-    void RpcDoPrimaryWeaponEmptyClipEffect() {
-        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).emptyClipAudio.clip, currentItem.transform.position, 0.5f);
-    }
-
-    // Do on primary hit effect on all clients
-    [ClientRpc]
-    void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
-        // TODO: Instantiation objects takes a lot of processing power
-        // Look into "object pooling"
-        GameObject _hitEffect = Instantiate(((ItemWeapon)currentItem).hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
-        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).primaryImpactAudio.clip, _hitPosition, 0.5f);
-        Destroy(_hitEffect, 1f);
-    }
-
     [Command]   // only called on the server!
-    public void CmdOnPlayerShotWithWeapon(string _playerID, float _damage, string _sourceID) {
+    void CmdOnPlayerShotWithWeapon(string _playerID, float _damage, string _sourceID) {
         Player _player = GameManager.GetPlayer(_playerID);
         _player.RpcTakeDamage(_damage, _sourceID);
     }
@@ -201,16 +188,55 @@ public class PlayerInteraction : NetworkBehaviour {
         }
         CancelInvoke("Primary");
     }
+    #endregion
+    #region ClientRPCs
+    // Do on primary effect on all clients
+    [ClientRpc]
+    void RpcDoPrimaryWeaponEffect() {
+        GameObject _muzzleFlash = Instantiate(((ItemWeapon)currentItem).muzzleFlash, ((ItemWeapon)currentItem).actionOrigin.position, Quaternion.LookRotation(((ItemWeapon)currentItem).actionOrigin.position));
+        if (isLocalPlayer) {
+            _muzzleFlash.layer = LayerMask.NameToLayer(PLAYER_ITEM_LAYER);
+        }
+        AudioSource _audio = Instantiate(((ItemWeapon)currentItem).primaryAudio, ((ItemWeapon)currentItem).actionOrigin.transform, false);
+        _audio.spatialBlend = 1.0f;
+        _audio.Play();
+        Destroy(_muzzleFlash, 1f);
+        Destroy(_audio.gameObject, 1f);
+    }
+
+    [ClientRpc]
+    void RpcDoPrimaryWeaponEmptyClipEffect() {
+        AudioSource _audio = Instantiate(((ItemWeapon)currentItem).emptyClipAudio, currentItem.transform, false);
+        _audio.spatialBlend = 1.0f;
+        _audio.Play();
+        Destroy(_audio.gameObject, 1f);
+    }
+
+    // Do on primary hit effect on all clients
+    [ClientRpc]
+    void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+        // TODO: Instantiation objects takes a lot of processing power
+        // Look into "object pooling"
+        GameObject _hitEffect = Instantiate(((ItemWeapon)currentItem).hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
+        //AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).primaryImpactAudio.clip, _hitPosition, 0.5f);
+        AudioSource _audio = Instantiate(((ItemWeapon)currentItem).primaryImpactAudio, _hitPosition, Quaternion.identity);
+        _audio.spatialBlend = 1.0f;
+        _audio.Play();
+        Destroy(_hitEffect, 1f);
+        Destroy(_audio.gameObject, 1f);
+    }
 
     [ClientRpc]
     void RpcOnReloadWeapon() {
-        AudioSource _audio = AudioSource.Instantiate(((ItemWeapon)currentItem).reloadAudio, currentItem.transform, false);
+        AudioSource _audio = Instantiate(((ItemWeapon)currentItem).reloadAudio, currentItem.transform, false);
+        _audio.spatialBlend = 1.0f;
         _audio.Play();
         Animator _animator = currentItem.GetComponent<Animator>();
         if (_animator != null) {
             _animator.SetTrigger("Reload");
         }
-        Destroy(_audio, ((ItemWeapon)currentItem).weaponReloadTime);
+        Destroy(_audio.gameObject, ((ItemWeapon)currentItem).weaponReloadTime);
     }
+    #endregion
     #endregion
 }

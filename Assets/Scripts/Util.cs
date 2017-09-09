@@ -4,7 +4,7 @@ using System.IO;
 
 public class Util {
 
-    private const int CURRENT_VERSION = 170906;
+    private const int CURRENT_VERSION = 170909;
 
 	public static void SetLayerRecursively(GameObject _obj, int _newLayer) {
         if (_obj == null) {
@@ -43,7 +43,7 @@ public class Util {
 
     public static bool CheckNewVersionOnline() {
         WebClient _client = new WebClient();
-        Stream _stream = _client.OpenRead("http://schauerte.online/wp-content/uploads/2017/09/version.txt");
+        Stream _stream = _client.OpenRead("http://schauerte.online/version.txt");
         StreamReader _reader = new StreamReader(_stream);
         string _content = _reader.ReadToEnd();
         int _version;

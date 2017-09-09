@@ -104,6 +104,12 @@ public class PlayerController : MonoBehaviour {
         // Apply movement
         motor.Move(_velocity);
 
+        if (Inventory.isInventory) {
+            motor.Rotate(Vector3.zero);
+            motor.RotateCamera(0f);
+            return;
+        }
+
         // Calculate player rotation as a 3D vector for turning the character
         float _yRotation = Input.GetAxisRaw("Mouse X");
         Vector3 _rotation = new Vector3(0f, _yRotation, 0f) * lookSensitivity;

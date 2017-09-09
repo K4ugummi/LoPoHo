@@ -27,6 +27,11 @@ public class ItemManager : NetworkBehaviour {
         if (!isLocalPlayer) {
             return;
         }
+        foreach(Item _item in items) {
+            if (_item == null) {
+                continue;
+            }
+        }
         CmdOnEquipItem(0);
 	}
     
@@ -60,6 +65,7 @@ public class ItemManager : NetworkBehaviour {
         else {
             Util.SetLayerRecursively(_itemInstance, LayerMask.NameToLayer(DEFAULT_LAYER));
         }
+        currentItem = currentItemInstance.GetComponent<Item>();
     }
 
     //public void Reload() {
