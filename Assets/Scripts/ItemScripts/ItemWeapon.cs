@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System;
 
 public class ItemWeapon : Item {
     private const string PLAYER_TAG = "Player";
+
+    private PlayerInteraction playerInteraction;
 
     [Header("##### Weapon Info #####")]
     [SerializeField]
@@ -21,7 +24,7 @@ public class ItemWeapon : Item {
     #region Graphic Effects
     [Header("Graphic Effects:")]
     [SerializeField]
-    public ParticleSystem muzzleFlash;
+    public GameObject muzzleFlash;
     [SerializeField]
     public GameObject hitEffectPrefab;
     #endregion
@@ -39,88 +42,58 @@ public class ItemWeapon : Item {
     public AudioSource reloadAudio;
     #endregion
 
-    public ItemWeapon() {
+    void Start() {
+        playerInteraction = GetComponentInParent<PlayerInteraction>();
+        if (playerInteraction == null) {
+            Debug.LogError("ItemWeapon: playerInteraction == null!");
+        }
+    }
+
+    ItemWeapon() {
         weaponCurClipSize = weaponMaxClipSize;
     }
 
     #region Visitor
     override public void Accept(VisItemPrimary _vis) {
-        Debug.Log("VisItemPrimary");
         Primary();
+    }
+    public override void Accept(VisItemReload _vis) {
+        if (weaponCurClipSize < weaponMaxClipSize) {
+            Reload();
+        }
     }
 
     #endregion
     #region Primary
-    [Client]
+    //[Client]
     void Primary() {
-        if (isReloading || weaponCurClipSize <= 0) {
+        if (isReloading) {
+            return;
+        }
+        else if (weaponCurClipSize <= 0) {
+            playerInteraction.CmdDoPrimaryWeaponEmptyClipEffect();
             return;
         }
 
         weaponCurClipSize--;
-
         // Call the OnPrimary method on the server
-        CmdOnPrimary();
-
+        playerInteraction.CmdOnPrimaryWeapon();
         RaycastHit _hit;
-        if (Physics.Raycast(actionOrigin.transform.position, actionOrigin.transform.forward, out _hit, weaponRange, hitMask)) {
+        if (Physics.Raycast(playerInteraction.cam.transform.position, playerInteraction.cam.transform.forward, out _hit, weaponRange, hitMask)) {
             // TODO: Differentiate hit effect and actions!
             // Something has been hit by clicking primary mouse button! 
             // Spawn the on hit effect on the server
             Debug.Log("Shot hit: " + _hit.collider.name);
-            CmdOnPrimaryHit(_hit.point, _hit.normal);
+            playerInteraction.CmdOnPrimaryWeaponHit(_hit.point, _hit.normal);
             switch (_hit.collider.tag) {
                 case PLAYER_TAG:
-                    CmdOnPlayerShot(_hit.collider.name, weaponDamage, transform.name);
+                    playerInteraction.CmdOnPlayerShotWithWeapon(_hit.collider.name, weaponDamage, transform.name);
                     break;
                 default:
                     break;
             }
         }
     }
-
-    [Command]
-    void CmdOnPrimary() {
-        RpcDoPrimaryEffect();
-    }
-
-    // Do on primary effect on all clients
-    [ClientRpc]
-    void RpcDoPrimaryEffect() {
-        //PlayerItem _item = itemManager.GetCurrentItem();
-        //if (_item == null) {
-        //    return;
-        //}
-        // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        muzzleFlash.Play();
-        AudioSource.PlayClipAtPoint(primaryAudio.clip, transform.position, 0.5f);
-    }
-
-    // Is called on the server, when the primary mouse button action has hit something
-    [Command]
-    void CmdOnPrimaryHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
-        RpcDoPrimaryHitEffect(_hitPosition, _normalOfSurface);
-    }
-
-    // Do on primary hit effect on all clients
-    [ClientRpc]
-    void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
-        //if (_item == null) {
-        //    return;
-        //}
-        // TODO: Instantiation objects takes a lot of processing power
-        // Look into "object pooling"
-        GameObject _hitEffect = Instantiate(hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
-        AudioSource.PlayClipAtPoint(primaryImpactAudio.clip, _hitPosition, 0.5f);
-        Destroy(_hitEffect, 1f);
-    }
-
-    [Command]   // only called on the server!
-    void CmdOnPlayerShot(string _playerID, float _damage, string _sourceID) {
-        Player _player = GameManager.GetPlayer(_playerID);
-        _player.RpcTakeDamage(_damage, _sourceID);
-    }
-    #endregion
 
     public void Reload() {
         if (isReloading) {
@@ -134,7 +107,7 @@ public class ItemWeapon : Item {
 
         isReloading = true;
 
-        CmdOnReload();
+        playerInteraction.CmdOnReloadWeapon();
 
         yield return new WaitForSeconds(weaponReloadTime);
 
@@ -143,16 +116,6 @@ public class ItemWeapon : Item {
         isReloading = false;
     }
 
-    [Command]
-    void CmdOnReload() {
-        RpcOnReload();
-    }
 
-    [ClientRpc]
-    void RpcOnReload() {
-        //Animator _animator = currentItem.GetComponent<Animator>();
-        //if (_animator != null) {
-        //    _animator.SetTrigger("Reload");
-        //}
-    }
+    #endregion
 }

@@ -7,12 +7,13 @@ public class PlayerInteraction : NetworkBehaviour {
     private const string PLAYER_TAG = "Player";
 
     [SerializeField]
-    private Camera cam;
+    public Camera cam;
     [SerializeField]
     private LayerMask hitMask;
 
     private int selectedItemIndex = 0;
     private Item currentItem;
+    private GameObject currentItemInstance;
     private ItemManager itemManager;
 
     void Start() {
@@ -25,19 +26,16 @@ public class PlayerInteraction : NetworkBehaviour {
     }
 
     void Update() {
+        currentItemInstance = itemManager.GetCurrentItemInstance();
         if (Input.GetKeyDown(KeyCode.F12)) {
-            if (isLocalPlayer) {
-                Util.TakeScreenshot();
-            }
+            Util.TakeScreenshot();
         }
-
-        currentItem = itemManager.GetCurrentItem();
-
         if (PauseMenu.isPauseMenu) {
             return;
         }
         #region Item Action
-        if (currentItem != null) {
+        if (currentItemInstance != null) {
+            currentItem = currentItemInstance.GetComponent<Item>();
             //if (currentItem.itemAmmo < currentItem.itemMaxAmmo) {
             //    if (Input.GetButtonDown("Reload")) {
             //        itemManager.Reload();
@@ -57,11 +55,18 @@ public class PlayerInteraction : NetworkBehaviour {
             //        CancelInvoke("Primary");
             //    }
             //}
+            if (Input.GetButtonDown("Reload")) {
+                VisItemReload _visItemReload = new VisItemReload();
+                currentItem.Accept(_visItemReload);
+            }
 
             if (Input.GetButtonDown("MousePrimary")) {
-                Debug.Log("MousePrimary pressed!");
-                VisItemPrimary _visItemPrimary = new VisItemPrimary();
-                currentItem.Accept(_visItemPrimary);
+                VisItemPrimary _visItemPrimaryDown = new VisItemPrimary();
+                currentItem.Accept(_visItemPrimaryDown);
+                //CmdOnPrimary(_visItemPrimaryDown);
+            }
+            else if (Input.GetButtonUp("MousePrimary")) {
+
             }
 
         }
@@ -76,7 +81,6 @@ public class PlayerInteraction : NetworkBehaviour {
                 selectedItemIndex++;
             }
         }
-        #region ItemSelect
         if (Input.GetButtonDown("Item1")) {
             selectedItemIndex = 0;
         }
@@ -107,7 +111,6 @@ public class PlayerInteraction : NetworkBehaviour {
         if (Input.GetButtonDown("Item10")) {
             selectedItemIndex = 9;
         }
-        #endregion
         if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
             if (selectedItemIndex <= 0) {
                 selectedItemIndex = itemManager.GetItemsLength() - 1;
@@ -132,49 +135,58 @@ public class PlayerInteraction : NetworkBehaviour {
         itemManager.CmdOnEquipItem(selectedItemIndex);
     }
 
-    //// Is called on the server, when a player uses his primary mouse button
-    //[Command]
-    //void CmdOnPrimary() {
-    //    RpcDoPrimaryEffect();
-    //}
+    [Client]
+    void Primary() {
+        VisItemPrimary _visItemPrimaryDown = new VisItemPrimary();
+        currentItem.Accept(_visItemPrimaryDown);
+    }
 
-    //// Do on primary effect on all clients
-    //[ClientRpc]
-    //void RpcDoPrimaryEffect() {
-    //    PlayerItem _item = itemManager.GetCurrentItem();
-    //    if (_item == null) {
-    //        return;
-    //    }
-    //    // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //    _item.GetMuzzleFlash().Play();
-    //    AudioSource.PlayClipAtPoint(_item.primaryAudio.clip, transform.position, 0.5f);
-    //}
+    #region Weapon
+    [Command]
+    public void CmdOnPrimaryWeapon() {
+        RpcDoPrimaryWeaponEffect();
+    }
+    [Command]
+    public void CmdDoPrimaryWeaponEmptyClipEffect() {
+        RpcDoPrimaryWeaponEmptyClipEffect();
+    }
+    [Command]
+    public void CmdOnPrimaryWeaponHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+        RpcDoPrimaryHitEffect(_hitPosition, _normalOfSurface);
+    }
+    [Command]
+    public void CmdOnReloadWeapon() {
+        RpcOnReloadWeapon();
+    }
 
-    //// Is called on the server, when the primary mouse button action has hit something
-    //[Command]
-    //void CmdOnPrimaryHit(Vector3 _hitPosition, Vector3 _normalOfSurface) {
-    //    RpcDoPrimaryHitEffect(_hitPosition, _normalOfSurface);
-    //}
+    // Do on primary effect on all clients
+    [ClientRpc]
+    void RpcDoPrimaryWeaponEffect() {
+        // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //_item.GetMuzzleFlash().Play();
+        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).primaryAudio.clip, currentItem.transform.position, 0.5f);
+    }
 
-    //// Do on primary hit effect on all clients
-    //[ClientRpc]
-    //void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
-    //    PlayerItem _item = itemManager.GetCurrentItem();
-    //    if (_item == null) {
-    //        return;
-    //    }
-    //    // TODO: Instantiation objects takes a lot of processing power
-    //    // Look into "object pooling"
-    //    GameObject _hitEffect = Instantiate(_item.hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
-    //    AudioSource.PlayClipAtPoint(_item.primaryImpactAudio.clip, _hitPosition, 0.5f);
-    //    Destroy(_hitEffect, 1f);
-    //}
+    [ClientRpc]
+    void RpcDoPrimaryWeaponEmptyClipEffect() {
+        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).emptyClipAudio.clip, currentItem.transform.position, 0.5f);
+    }
 
-    //[Command]   // only called on the server!
-    //void CmdOnPlayerShot(string _playerID, int _damage, string _sourceID) {
-    //    Player _player = GameManager.GetPlayer(_playerID);
-    //    _player.RpcTakeDamage(_damage, _sourceID);
-    //} 
+    // Do on primary hit effect on all clients
+    [ClientRpc]
+    void RpcDoPrimaryHitEffect(Vector3 _hitPosition, Vector3 _normalOfSurface) {
+        // TODO: Instantiation objects takes a lot of processing power
+        // Look into "object pooling"
+        GameObject _hitEffect = Instantiate(((ItemWeapon)currentItem).hitEffectPrefab, _hitPosition, Quaternion.LookRotation(_normalOfSurface));
+        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).primaryImpactAudio.clip, _hitPosition, 0.5f);
+        Destroy(_hitEffect, 1f);
+    }
+
+    [Command]   // only called on the server!
+    public void CmdOnPlayerShotWithWeapon(string _playerID, float _damage, string _sourceID) {
+        Player _player = GameManager.GetPlayer(_playerID);
+        _player.RpcTakeDamage(_damage, _sourceID);
+    }
 
     public void CancelAllActionsOnDeath() {
         if (!isLocalPlayer) {
@@ -182,4 +194,14 @@ public class PlayerInteraction : NetworkBehaviour {
         }
         CancelInvoke("Primary");
     }
+
+    [ClientRpc]
+    void RpcOnReloadWeapon() {
+        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).reloadAudio.clip, currentItem.transform.position, ((ItemWeapon)currentItem).weaponReloadTime);
+        Animator _animator = currentItem.GetComponent<Animator>();
+        if (_animator != null) {
+            _animator.SetTrigger("Reload");
+        }
+    }
+    #endregion
 }

@@ -8,7 +8,6 @@ public class ItemTool : Item {
     [SerializeField]
     public bool isSelfUsable;
 
-    override public void Accept(VisItemPrimary _vis) {
-        // Do tool primary stuff;
-    }
+    override public void Accept(VisItemPrimary _vis) { }
+    override public void Accept(VisItemReload _vis) { }
 }

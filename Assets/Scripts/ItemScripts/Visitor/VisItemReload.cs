@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VisItemPrimary : VisItem {
+public class VisItemReload : VisItem {
 
     public override void VisItemPlaceable(ItemPlaceable _item) {
         _item.Accept(this);

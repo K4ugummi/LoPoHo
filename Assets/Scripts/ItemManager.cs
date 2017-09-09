@@ -27,13 +27,7 @@ public class ItemManager : NetworkBehaviour {
         if (!isLocalPlayer) {
             return;
         }
-		CmdOnEquipItem(0);
-        foreach (Item _item in items) {
-            if (_item == null) {
-                continue;
-            }
-            //_item.SetWeaponAmmoToMax();
-        }
+        CmdOnEquipItem(0);
 	}
     
     [Command]
@@ -48,7 +42,6 @@ public class ItemManager : NetworkBehaviour {
         }
 
         Item _item = items[_itemIndex];
-
         currentItem = _item;
         if (isLocalPlayer) {
             isItemChangedGuiFlag = true;
@@ -58,7 +51,7 @@ public class ItemManager : NetworkBehaviour {
             return;
         }
 
-        GameObject _itemInstance = (GameObject)Instantiate(_item.itemGraphics, itemHolder.position, itemHolder.rotation);
+        GameObject _itemInstance = (GameObject)Instantiate(_item.gameObject, itemHolder.position, itemHolder.rotation);
         _itemInstance.transform.SetParent(itemHolder);
         currentItemInstance = _itemInstance;
         if (isLocalPlayer) {
@@ -116,6 +109,10 @@ public class ItemManager : NetworkBehaviour {
 
     public Item GetCurrentItem() {
         return currentItem;
+    }
+
+    public GameObject GetCurrentItemInstance() {
+        return currentItemInstance;
     }
 
     public string GetCurrentItemName() {
