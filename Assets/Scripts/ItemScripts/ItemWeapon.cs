@@ -14,6 +14,7 @@ public class ItemWeapon : Item {
     public Transform actionOrigin;
     public float weaponDamage;
     public int weaponMaxClipSize;
+    [HideInInspector]
     public int weaponCurClipSize;
     public float weaponRange;
     public float weaponFireRate;
@@ -49,18 +50,26 @@ public class ItemWeapon : Item {
         }
     }
 
-    ItemWeapon() {
-        weaponCurClipSize = weaponMaxClipSize;
-    }
-
     #region Visitor
-    override public void Accept(VisItemPrimary _vis) {
-        Primary();
+    override public void Accept(VisItemPrimaryDown _vis) {
+        if (weaponFireRate <= Mathf.Epsilon ) {
+            Primary();
+        }
+        else {
+            InvokeRepeating("Primary", 0f, 1 / weaponFireRate);
+        }
     }
     public override void Accept(VisItemReload _vis) {
         if (weaponCurClipSize < weaponMaxClipSize) {
             Reload();
         }
+    }
+    public override void Accept(VisItemPrimaryUp _vis) {
+        CancelInvoke("Primary");
+    }
+    public override void Accept(VisItemAmmo _vis) {
+        _vis.currentClipSize = weaponCurClipSize;
+        _vis.maxClipSize = weaponMaxClipSize;
     }
 
     #endregion
@@ -72,6 +81,7 @@ public class ItemWeapon : Item {
         }
         else if (weaponCurClipSize <= 0) {
             playerInteraction.CmdDoPrimaryWeaponEmptyClipEffect();
+            CancelInvoke("Primary");
             return;
         }
 

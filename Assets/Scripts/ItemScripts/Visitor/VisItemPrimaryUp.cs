@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VisItemPrimaryDown : VisItem {
+public class VisItemPrimaryUp : VisItem {
 
     public override void VisItemPlaceable(ItemPlaceable _item) {
         _item.Accept(this);

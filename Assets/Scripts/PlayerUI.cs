@@ -47,11 +47,13 @@ public class PlayerUI : MonoBehaviour {
 		SetHealthAmount(player.GetCurrentHealth(), player.GetMaxHealth());
 
         if (itemManager.GetCurrentItem() != null) {
-            SetWeaponName(itemManager.GetCurrentItem().itemName);
-            //SetAmmoAmount(itemManager.GetCurrentItem().itemAmmo, itemManager.GetCurrentItem().itemMaxAmmo);
+            SetItemName(itemManager.GetCurrentItem().itemName);
+            VisItemAmmo _visItemAmmo = new VisItemAmmo();
+            itemManager.GetCurrentItemInstance().GetComponent<Item>().Accept(_visItemAmmo);
+            SetAmmoAmount(_visItemAmmo.currentClipSize, _visItemAmmo.maxClipSize);
         }
         else {
-            SetWeaponName("None");
+            SetItemName("None");
             SetAmmoAmount(0, 0);
         }
 
@@ -91,7 +93,7 @@ public class PlayerUI : MonoBehaviour {
         healthText.text = "Health (" + Mathf.RoundToInt(_amount) + "/" + Mathf.RoundToInt(_max) + ")";
     }
 
-    void SetWeaponName(string _name) {
+    void SetItemName(string _name) {
         weaponText.text = _name;
     }
 

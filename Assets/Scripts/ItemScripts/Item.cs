@@ -7,7 +7,9 @@ public abstract class Item : MonoBehaviour {
     [SerializeField]
     public string itemName;
 
-    public abstract void Accept(VisItemPrimary _vis);
+    public abstract void Accept(VisItemPrimaryDown _vis);
     public abstract void Accept(VisItemReload _vis);
+    public abstract void Accept(VisItemPrimaryUp _vis);
+    public abstract void Accept(VisItemAmmo _vis);
 
 }

@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VisItemPrimaryDown : VisItem {
+public class VisItemAmmo : VisItem {
+
+    public int currentClipSize;
+    public int maxClipSize;
 
     public override void VisItemPlaceable(ItemPlaceable _item) {
         _item.Accept(this);

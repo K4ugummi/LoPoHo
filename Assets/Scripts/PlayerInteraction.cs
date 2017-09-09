@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 public class PlayerInteraction : NetworkBehaviour {
 
     private const string PLAYER_TAG = "Player";
+    private const string PLAYER_ITEM_LAYER = "PlayerItem";
 
     [SerializeField]
     public Camera cam;
@@ -61,12 +62,13 @@ public class PlayerInteraction : NetworkBehaviour {
             }
 
             if (Input.GetButtonDown("MousePrimary")) {
-                VisItemPrimary _visItemPrimaryDown = new VisItemPrimary();
+                VisItemPrimaryDown _visItemPrimaryDown = new VisItemPrimaryDown();
                 currentItem.Accept(_visItemPrimaryDown);
                 //CmdOnPrimary(_visItemPrimaryDown);
             }
             else if (Input.GetButtonUp("MousePrimary")) {
-
+                VisItemPrimaryUp _visItemPrimaryUp = new VisItemPrimaryUp();
+                currentItem.Accept(_visItemPrimaryUp);
             }
 
         }
@@ -137,7 +139,7 @@ public class PlayerInteraction : NetworkBehaviour {
 
     [Client]
     void Primary() {
-        VisItemPrimary _visItemPrimaryDown = new VisItemPrimary();
+        VisItemPrimaryDown _visItemPrimaryDown = new VisItemPrimaryDown();
         currentItem.Accept(_visItemPrimaryDown);
     }
 
@@ -164,7 +166,12 @@ public class PlayerInteraction : NetworkBehaviour {
     void RpcDoPrimaryWeaponEffect() {
         // TODO: FIX THIS SHIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //_item.GetMuzzleFlash().Play();
+        GameObject _muzzleFlash = Instantiate(((ItemWeapon)currentItem).muzzleFlash, ((ItemWeapon)currentItem).actionOrigin.position, Quaternion.LookRotation(((ItemWeapon)currentItem).actionOrigin.position));
+        if (isLocalPlayer) {
+            _muzzleFlash.layer = LayerMask.NameToLayer(PLAYER_ITEM_LAYER);
+        }
         AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).primaryAudio.clip, currentItem.transform.position, 0.5f);
+        Destroy(_muzzleFlash, 1f);
     }
 
     [ClientRpc]
@@ -197,11 +204,13 @@ public class PlayerInteraction : NetworkBehaviour {
 
     [ClientRpc]
     void RpcOnReloadWeapon() {
-        AudioSource.PlayClipAtPoint(((ItemWeapon)currentItem).reloadAudio.clip, currentItem.transform.position, ((ItemWeapon)currentItem).weaponReloadTime);
+        AudioSource _audio = AudioSource.Instantiate(((ItemWeapon)currentItem).reloadAudio, currentItem.transform, false);
+        _audio.Play();
         Animator _animator = currentItem.GetComponent<Animator>();
         if (_animator != null) {
             _animator.SetTrigger("Reload");
         }
+        Destroy(_audio, ((ItemWeapon)currentItem).weaponReloadTime);
     }
     #endregion
 }
