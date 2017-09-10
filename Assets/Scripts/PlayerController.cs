@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour {
         // Apply movement
         motor.Move(_velocity);
 
-        if (Inventory.isInventory) {
+        if (GUIInventory.isInventory) {
             motor.Rotate(Vector3.zero);
             motor.RotateCamera(0f);
             return;

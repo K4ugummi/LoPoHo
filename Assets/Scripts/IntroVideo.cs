@@ -9,7 +9,7 @@ public class IntroVideo : MonoBehaviour {
     void Start() {
         Util.HideCursor();
         StartCoroutine(WaitAndLoad(7.7f));
-        async = SceneManager.LoadSceneAsync("LoginMenu");
+        async = SceneManager.LoadSceneAsync("Scenes/LoginMenu");
         async.allowSceneActivation = false;
     }
 

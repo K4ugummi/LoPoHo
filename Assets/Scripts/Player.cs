@@ -170,7 +170,7 @@ public class Player : NetworkBehaviour {
         if (isLocalPlayer) {
             GameManager.instance.SetSceneCameraActive(true);
             GetComponent<PlayerSetup>().playerUiInstance.SetActive(false);
-            GetComponent<PlayerUI>();
+            GetComponent<GUIPlayer>();
         }
 
         Debug.Log("Player: " + transform.name + " died!");

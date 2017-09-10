@@ -4,7 +4,7 @@ using System.IO;
 
 public class Util {
 
-    private const int CURRENT_VERSION = 1709092;
+    private const int CURRENT_VERSION = 170910;
 
 	public static void SetLayerRecursively(GameObject _obj, int _newLayer) {
         if (_obj == null) {

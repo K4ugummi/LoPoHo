@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class PlayerUI : MonoBehaviour {
+public class GUIPlayer : MonoBehaviour {
 
     [SerializeField]
     RectTransform staminaBarFill;
@@ -19,8 +19,10 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField]
     TMP_Text ammoText;
     [SerializeField]
-    GuiSelectableItem[] selectableItems;
-	[SerializeField]
+    DragSlot[] selectableItemSlots;
+    [SerializeField]
+    DragSlot[] inventoryItemSLots;
+    [SerializeField]
 	GameObject pauseMenu;
 	[SerializeField]
 	GameObject scoreboard;
@@ -43,7 +45,7 @@ public class PlayerUI : MonoBehaviour {
 
 	void Start () {
 		PauseMenu.isPauseMenu = false;
-        Inventory.isInventory = false;
+        GUIInventory.isInventory = false;
         pauseMenu.SetActive(false);
         inventory.SetActive(false);
     }
@@ -75,10 +77,11 @@ public class PlayerUI : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.I)) {
             ToggleInventory();
+            RedrawItems();
         }
 
         if (itemManager.isItemChangedGuiFlag) {
-            RedrawSelectableItems();
+            RedrawItems();
         }
 
         if (playerInteraction.GetCanInteract()) {
@@ -101,9 +104,10 @@ public class PlayerUI : MonoBehaviour {
     }
 
     public void ToggleInventory() {
+        itemManager.ProcessSwitchedItems();
         inventory.SetActive(!inventory.activeSelf);
-        Inventory.isInventory = inventory.activeSelf;
-        if (Inventory.isInventory) {
+        GUIInventory.isInventory = inventory.activeSelf;
+        if (GUIInventory.isInventory) {
             Util.ShowCursor();
             Cursor.lockState = CursorLockMode.None;
         }
@@ -138,18 +142,51 @@ public class PlayerUI : MonoBehaviour {
         }
 	}
 
-    void RedrawSelectableItems() {
+    void RedrawItems() {
         string[] _itemNames = itemManager.GetCurrentItemNames();
+        GameObject[] _itemImages = itemManager.GetCurrentItemImages();
         for (int i = 0; i < 10; i++) {
-            GuiSelectableItem _item = selectableItems[i];
-            _item.itemNameText.text = _itemNames[i];
+            DragSlot _itemSlot = selectableItemSlots[i];
+            if (_itemSlot.transform.childCount > 0) {
+                Destroy(_itemSlot.transform.GetChild(0).gameObject);
+            }
+            if (_itemImages[i] != null) {
+                GameObject _currentItemImage = _itemImages[i];
+                _currentItemImage.transform.SetParent(_itemSlot.transform);
+                _currentItemImage.transform.position = _itemSlot.transform.position;
+                _itemSlot.dragSlotHint = _itemNames[i];
+            }
+
             Color _color = new Color(0f, 0f, 0f, 100f / 255f);
             if (i == itemManager.selectedItemIndex) { //191 131 0
                 _color.r = 191f/255f;
                 _color.g = 131f/255f;
             }
-            _item.itemIsSelectedImage.color = _color;
+            _itemSlot.GetComponent<Image>().color = _color;
         }
+
+        if (inventory.activeSelf) {
+            string[] _inventoryItemNames = itemManager.GetCurrentInventoryItemNames();
+            GameObject[] _inventoryItemImages = itemManager.GetCurrentInventoryItemImages();
+            for (int i = 0; i < 30; i++) {
+                DragSlot _inventoryItemSlot = inventoryItemSLots[i];
+                if (_inventoryItemSlot.transform.childCount > 0) {
+                    Destroy(_inventoryItemSlot.transform.GetChild(0).gameObject);
+                }
+                if (_inventoryItemImages[i] != null) {
+                    GameObject _currentItemImage = _inventoryItemImages[i];
+                    _currentItemImage.transform.SetParent(_inventoryItemSlot.transform);
+                    _currentItemImage.transform.position = _inventoryItemSlot.transform.position;
+                    _inventoryItemSlot.dragSlotHint = _inventoryItemNames[i];
+                }
+            }
+        }
+
         itemManager.isItemChangedGuiFlag = false;
     }
+
+    public void AddSwitchedItems(ItemSwitchInfo _info) {
+        itemManager.AddSwitchedItems(_info);
+    }
+
 }

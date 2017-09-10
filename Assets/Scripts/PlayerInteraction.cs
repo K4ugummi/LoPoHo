@@ -37,7 +37,7 @@ public class PlayerInteraction : NetworkBehaviour {
         if (PauseMenu.isPauseMenu) {
             return;
         }
-        if (Inventory.isInventory) {
+        if (GUIInventory.isInventory) {
             return;
         }
         currentItem = itemManager.GetCurrentItem();

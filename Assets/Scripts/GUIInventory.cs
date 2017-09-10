@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour {
+public class GUIInventory : MonoBehaviour {
 
     public static bool isInventory = false;
     
 }
+

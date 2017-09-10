@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ItemManager : NetworkBehaviour {
 
@@ -13,6 +14,8 @@ public class ItemManager : NetworkBehaviour {
     
     [SerializeField]
     private Item[] items;
+    [SerializeField]
+    private Item[] inventoryItems;
 
 	private Item currentItem;
     [HideInInspector]
@@ -21,15 +24,21 @@ public class ItemManager : NetworkBehaviour {
 	public bool isReloading = false;
     [HideInInspector]
     public bool isItemChangedGuiFlag = true;
+    [HideInInspector]
+    public bool isInventoryChangedGuiFlag = true;
+    [HideInInspector]
+    private Queue<ItemSwitchInfo> itemSwitchInfoQueue;
 
-    void Start() { 
+    void Start() {
         if (!isLocalPlayer) {
             return;
         }
-        foreach(Item _item in items) {
+        itemSwitchInfoQueue = new Queue<ItemSwitchInfo>();
+        foreach (Item _item in items) {
             if (_item == null) {
                 continue;
             }
+            // TODO: Entfernen!
             ((ItemWeapon)_item).weaponCurClipSize = ((ItemWeapon)_item).weaponMaxClipSize;
         }
         CmdOnEquipItem(0);
@@ -71,47 +80,6 @@ public class ItemManager : NetworkBehaviour {
         currentItem = currentItemInstance.GetComponent<Item>();
     }
 
-    //public void Reload() {
-    //    if (isReloading) {
-    //        return;
-    //    }
-
-    //    StartCoroutine(ReloadCoroutine());
-    //}
-
-    //private IEnumerator ReloadCoroutine() {
-    //    Debug.Log("Reloading...");
-
-    //    isReloading = true;
-
-    //    CmdOnReload();
-
-    //    yield return new WaitForSeconds(currentItem.itemReloadTime);
-
-    //    currentItem.itemAmmo = currentItem.itemMaxAmmo;
-
-    //    isReloading = false;
-    //}
-
-    //[Command]
-    //void CmdOnReload() {
-    //    RpcOnReload();
-    //}
-
-    //[ClientRpc]
-    //void RpcOnReload() {
-    //    Animator _animator = currentItem.GetComponent<Animator>();
-    //    if (_animator != null) {
-    //        _animator.SetTrigger("Reload");
-    //    }
-    //}
-
-    //public void ResetAmmo() {
-    //    if (currentItem != null) {
-    //        currentItem.itemAmmo = currentItem.itemMaxAmmo;
-    //    }
-    //}
-
     public int GetItemsLength() {
         return items.Length;
     }
@@ -128,13 +96,28 @@ public class ItemManager : NetworkBehaviour {
         if (currentItem != null) {
             return currentItem.itemName;
         }
-        return "None";
+        return "";
     }
 
     public string[] GetCurrentItemNames() {
         string[] _result = new string[10];
         int _i = 0;
         foreach (Item _item in items) {
+            if (_item == null) {
+                _result[_i] = "";
+            }
+            else {
+                _result[_i] = _item.itemName;
+            }
+            _i++;
+        }
+        return _result;
+    }
+
+    public string[] GetCurrentInventoryItemNames() {
+        string[] _result = new string[40];
+        int _i = 0;
+        foreach (Item _item in inventoryItems) {
             if (_item == null) {
                 _result[_i] = "None";
             }
@@ -146,8 +129,93 @@ public class ItemManager : NetworkBehaviour {
         return _result;
     }
 
+    public GameObject[] GetCurrentItemImages() {
+        GameObject[] _result = new GameObject[10];
+        int _i = 0;
+        foreach (Item _item in items) {
+            if (_item == null) {
+                _result[_i] = null;
+            }
+            else {
+                _result[_i] = Instantiate(_item.itemImage);
+            }
+            _i++;
+        }
+        return _result;
+    }
+
+    public GameObject[] GetCurrentInventoryItemImages() {
+        GameObject[] _result = new GameObject[30];
+        int _i = 0;
+        foreach (Item _item in inventoryItems) {
+            if (_item == null) {
+                _result[_i] = null;
+            }
+            else {
+                _result[_i] = Instantiate(_item.itemImage);
+            }
+            _i++;
+        }
+        return _result;
+    }
+
     public int GetSelectedItemIndex() {
         return selectedItemIndex;
     }
 
+    public void AddSwitchedItems(ItemSwitchInfo _info) {
+        itemSwitchInfoQueue.Enqueue(_info);
+    }
+
+    public void ProcessSwitchedItems() {
+        //if (itemSwitchInfoQueue == null) {
+        //    return;
+        //}
+        while (itemSwitchInfoQueue.Count >  0) {
+            ItemSwitchInfo _info = itemSwitchInfoQueue.Peek();
+            Item _from = null;
+            Item _to = null;
+            switch (_info.fromTypeID) {
+                case 0:
+                    Debug.Log("From items[" + _info.fromID + "]");
+                    _from = items[_info.fromID];
+                    break;
+                case 1:
+                    Debug.Log("From inventoryItems[" + _info.fromID + "]");
+                    _from = inventoryItems[_info.fromID];
+                    break;
+                default:
+                    Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
+                    break;
+            }
+            switch (_info.toTypeID) {
+                case 0:
+                    Debug.Log("To items[" + _info.toID + "]");
+                    _to = items[_info.toID];
+                    items[_info.toID] = _from;
+                    break;
+                case 1:
+                    Debug.Log("To inventoryItems[" + _info.toID + "]");
+                    _to = inventoryItems[_info.toID];
+                    inventoryItems[_info.toID] = _from;
+                    break;
+                default:
+                    Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
+                    break;
+            }
+            switch (_info.fromTypeID) {
+                case 0:
+                    items[_info.fromID] = _to;
+                    break;
+                case 1:
+                    Debug.Log("From inventoryItems[" + _info.fromID + "]");
+                    inventoryItems[_info.fromID] = _to;
+                    break;
+                default:
+                    Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
+                    break;
+            }
+            itemSwitchInfoQueue.Dequeue();
+        }
+    }
 }
