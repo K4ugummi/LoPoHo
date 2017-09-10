@@ -26,14 +26,11 @@ public class ItemManager : NetworkBehaviour {
     public bool isItemChangedGuiFlag = true;
     [HideInInspector]
     public bool isInventoryChangedGuiFlag = true;
-    [HideInInspector]
-    private Queue<ItemSwitchInfo> itemSwitchInfoQueue;
 
     void Start() {
         if (!isLocalPlayer) {
             return;
         }
-        itemSwitchInfoQueue = new Queue<ItemSwitchInfo>();
         foreach (Item _item in items) {
             if (_item == null) {
                 continue;
@@ -163,59 +160,48 @@ public class ItemManager : NetworkBehaviour {
         return selectedItemIndex;
     }
 
-    public void AddSwitchedItems(ItemSwitchInfo _info) {
-        itemSwitchInfoQueue.Enqueue(_info);
-    }
-
-    public void ProcessSwitchedItems() {
-        //if (itemSwitchInfoQueue == null) {
-        //    return;
-        //}
-        while (itemSwitchInfoQueue.Count >  0) {
-            ItemSwitchInfo _info = itemSwitchInfoQueue.Peek();
-            Item _from = null;
-            Item _to = null;
-            switch (_info.fromTypeID) {
-                case 0:
-                    Debug.Log("From items[" + _info.fromID + "]");
-                    _from = items[_info.fromID];
-                    break;
-                case 1:
-                    Debug.Log("From inventoryItems[" + _info.fromID + "]");
-                    _from = inventoryItems[_info.fromID];
-                    break;
-                default:
-                    Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
-                    break;
-            }
-            switch (_info.toTypeID) {
-                case 0:
-                    Debug.Log("To items[" + _info.toID + "]");
-                    _to = items[_info.toID];
-                    items[_info.toID] = _from;
-                    break;
-                case 1:
-                    Debug.Log("To inventoryItems[" + _info.toID + "]");
-                    _to = inventoryItems[_info.toID];
-                    inventoryItems[_info.toID] = _from;
-                    break;
-                default:
-                    Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
-                    break;
-            }
-            switch (_info.fromTypeID) {
-                case 0:
-                    items[_info.fromID] = _to;
-                    break;
-                case 1:
-                    Debug.Log("From inventoryItems[" + _info.fromID + "]");
-                    inventoryItems[_info.fromID] = _to;
-                    break;
-                default:
-                    Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
-                    break;
-            }
-            itemSwitchInfoQueue.Dequeue();
+    public void ProcessSwitchedItems(ItemSwitchInfo _info) {
+        Item _from = null;
+        Item _to = null;
+        switch (_info.fromTypeID) {
+            case 0:
+                Debug.Log("From items[" + _info.fromID + "]");
+                _from = items[_info.fromID];
+                break;
+            case 1:
+                Debug.Log("From inventoryItems[" + _info.fromID + "]");
+                _from = inventoryItems[_info.fromID];
+                break;
+            default:
+                Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
+                break;
+        }
+        switch (_info.toTypeID) {
+            case 0:
+                Debug.Log("To items[" + _info.toID + "]");
+                _to = items[_info.toID];
+                items[_info.toID] = _from;
+                break;
+            case 1:
+                Debug.Log("To inventoryItems[" + _info.toID + "]");
+                _to = inventoryItems[_info.toID];
+                inventoryItems[_info.toID] = _from;
+                break;
+            default:
+                Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
+                break;
+        }
+        switch (_info.fromTypeID) {
+            case 0:
+                items[_info.fromID] = _to;
+                break;
+            case 1:
+                Debug.Log("From inventoryItems[" + _info.fromID + "]");
+                inventoryItems[_info.fromID] = _to;
+                break;
+            default:
+                Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
+                break;
         }
     }
 }

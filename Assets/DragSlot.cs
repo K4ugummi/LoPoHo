@@ -33,7 +33,7 @@ public class DragSlot : MonoBehaviour, IDropHandler {
             GUIPlayer _gui = GetComponentInParent<GUIPlayer>();
             Debug.Log("SWITCHING: " + DragHandler.startID + " " + DragHandler.startTypeID + " to " + _slotID + " " + _slotTypeID);
             ItemSwitchInfo _switchInfo = new ItemSwitchInfo(DragHandler.startID, DragHandler.startTypeID, _slotID, _slotTypeID);
-            _gui.AddSwitchedItems(_switchInfo);
+            _gui.ProcessSwitchedItems(_switchInfo);
             
         }
     }

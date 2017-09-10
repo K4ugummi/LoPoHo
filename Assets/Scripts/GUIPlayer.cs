@@ -104,7 +104,6 @@ public class GUIPlayer : MonoBehaviour {
     }
 
     public void ToggleInventory() {
-        itemManager.ProcessSwitchedItems();
         inventory.SetActive(!inventory.activeSelf);
         GUIInventory.isInventory = inventory.activeSelf;
         if (GUIInventory.isInventory) {
@@ -185,8 +184,8 @@ public class GUIPlayer : MonoBehaviour {
         itemManager.isItemChangedGuiFlag = false;
     }
 
-    public void AddSwitchedItems(ItemSwitchInfo _info) {
-        itemManager.AddSwitchedItems(_info);
+    public void ProcessSwitchedItems(ItemSwitchInfo _info) {
+        itemManager.ProcessSwitchedItems(_info);
     }
 
 }
