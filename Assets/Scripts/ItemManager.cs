@@ -36,7 +36,8 @@ public class ItemManager : NetworkBehaviour {
                 continue;
             }
             // TODO: Entfernen!
-            ((ItemWeapon)_item).weaponCurClipSize = ((ItemWeapon)_item).weaponMaxClipSize;
+            VisItemSetMaxAmmount _vis = new VisItemSetMaxAmmount();
+            _item.Accept(_vis);
         }
         CmdOnEquipItem(0);
 	}
@@ -50,7 +51,13 @@ public class ItemManager : NetworkBehaviour {
     void RpcOnEquipItem(int _itemIndex) {
         if (currentItemInstance != null) {
             if (isLocalPlayer) {
-                ((ItemWeapon)items[selectedItemIndex]).weaponCurClipSize = ((ItemWeapon)currentItemInstance.GetComponent<Item>()).weaponCurClipSize;
+                VisItemGetAmmo _visGet = new VisItemGetAmmo();
+                currentItemInstance.GetComponent<Item>().Accept(_visGet);
+                if (items[selectedItemIndex] != null) {
+                    VisItemSetAmmo _visSet = new VisItemSetAmmo();
+                    _visSet.currentAmmo = _visGet.currentClipSize;
+                    items[selectedItemIndex].Accept(_visSet);
+                }
             }
             Destroy(currentItemInstance);
         }
@@ -163,13 +170,16 @@ public class ItemManager : NetworkBehaviour {
     public void ProcessSwitchedItems(ItemSwitchInfo _info) {
         Item _from = null;
         Item _to = null;
+        bool _isCurrentSelectedItem = false;
         switch (_info.fromTypeID) {
             case 0:
-                Debug.Log("From items[" + _info.fromID + "]");
+                if (_info.fromID == selectedItemIndex) {
+                    _isCurrentSelectedItem = true;
+                    StoreCurrentItemInfo();
+                }
                 _from = items[_info.fromID];
                 break;
             case 1:
-                Debug.Log("From inventoryItems[" + _info.fromID + "]");
                 _from = inventoryItems[_info.fromID];
                 break;
             default:
@@ -178,12 +188,14 @@ public class ItemManager : NetworkBehaviour {
         }
         switch (_info.toTypeID) {
             case 0:
-                Debug.Log("To items[" + _info.toID + "]");
+                if (_info.toID == selectedItemIndex) {
+                    _isCurrentSelectedItem = true;
+                    StoreCurrentItemInfo();
+                }
                 _to = items[_info.toID];
                 items[_info.toID] = _from;
                 break;
             case 1:
-                Debug.Log("To inventoryItems[" + _info.toID + "]");
                 _to = inventoryItems[_info.toID];
                 inventoryItems[_info.toID] = _from;
                 break;
@@ -196,12 +208,29 @@ public class ItemManager : NetworkBehaviour {
                 items[_info.fromID] = _to;
                 break;
             case 1:
-                Debug.Log("From inventoryItems[" + _info.fromID + "]");
                 inventoryItems[_info.fromID] = _to;
                 break;
             default:
                 Debug.LogError("ItemManager: ItemInfo 'fromTypeID' is unknown!");
                 break;
+        }
+        if (_isCurrentSelectedItem) {
+            CmdOnEquipItem(selectedItemIndex);
+        }
+    }
+
+    void StoreCurrentItemInfo() {
+        if (currentItemInstance != null) {
+            if (isLocalPlayer) {
+                VisItemGetAmmo _visGet = new VisItemGetAmmo();
+                currentItemInstance.GetComponent<Item>().Accept(_visGet);
+                if (items[selectedItemIndex] != null) {
+                    VisItemSetAmmo _visSet = new VisItemSetAmmo();
+                    _visSet.currentAmmo = _visGet.currentClipSize;
+                    items[selectedItemIndex].Accept(_visSet);
+                }
+            }
+            Destroy(currentItemInstance);
         }
     }
 }

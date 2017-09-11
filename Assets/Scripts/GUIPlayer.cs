@@ -56,7 +56,7 @@ public class GUIPlayer : MonoBehaviour {
 
         if (itemManager.GetCurrentItem() != null) {
             SetItemName(itemManager.GetCurrentItem().itemName);
-            VisItemAmmo _visItemAmmo = new VisItemAmmo();
+            VisItemGetAmmo _visItemAmmo = new VisItemGetAmmo();
             itemManager.GetCurrentItemInstance().GetComponent<Item>().Accept(_visItemAmmo);
             SetAmmoAmount(_visItemAmmo.currentClipSize, _visItemAmmo.maxClipSize);
         }

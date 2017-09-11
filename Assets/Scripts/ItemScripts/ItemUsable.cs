@@ -6,9 +6,11 @@ public class ItemUsable : Item {
     [SerializeField]
     public float usableRange;
 
-    override public void Accept(VisItemPrimaryDown _vis) { }
-    override public void Accept(VisItemPrimaryUp _vis) { }
-    override public void Accept(VisItemReload _vis) { }
-    public override void Accept(VisItemAmmo _vis) { }
+    public override void Accept(VisItemPrimaryDown _vis) { }
+    public override void Accept(VisItemPrimaryUp _vis) { }
+    public override void Accept(VisItemReload _vis) { }
+    public override void Accept(VisItemGetAmmo _vis) { }
+    public override void Accept(VisItemSetAmmo _vis) { }
+    public override void Accept(VisItemSetMaxAmmount _vis) { }
 
 }

@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 using System.Collections;
-using System;
 
 public class ItemWeapon : Item {
     private const string PLAYER_TAG = "Player";
@@ -51,7 +49,7 @@ public class ItemWeapon : Item {
     }
 
     #region Visitor
-    override public void Accept(VisItemPrimaryDown _vis) {
+    public override void Accept(VisItemPrimaryDown _vis) {
         if (weaponFireRate <= Mathf.Epsilon ) {
             Primary();
         }
@@ -69,13 +67,19 @@ public class ItemWeapon : Item {
     public override void Accept(VisItemPrimaryUp _vis) {
         CancelInvoke("Primary");
     }
-    public override void Accept(VisItemAmmo _vis) {
+    public override void Accept(VisItemGetAmmo _vis) {
         _vis.currentClipSize = weaponCurClipSize;
         _vis.maxClipSize = weaponMaxClipSize;
     }
+    public override void Accept(VisItemSetAmmo _vis) {
+        weaponCurClipSize = _vis.currentAmmo;
+    }
+    public override void Accept(VisItemSetMaxAmmount _vis) {
+        weaponCurClipSize = weaponMaxClipSize;
+    }
 
     #endregion
-    #region Primary
+
     void Primary() {
         if (isReloading) {
             return;
@@ -120,6 +124,4 @@ public class ItemWeapon : Item {
         isReloading = false;
     }
 
-
-    #endregion
 }

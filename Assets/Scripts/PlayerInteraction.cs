@@ -144,7 +144,7 @@ public class PlayerInteraction : NetworkBehaviour {
     }
 
     #region Weapon Actions
-    #region Entrance For Weapons
+    #region Client
     [Client]
     public void OnPrimaryWeapon() {
         if (!isLocalPlayer) {
@@ -259,6 +259,45 @@ public class PlayerInteraction : NetworkBehaviour {
         }
         Destroy(_audio.gameObject, ((ItemWeapon)currentItem).weaponReloadTime);
     }
+    #endregion
+    #endregion
+
+    #region Placeable Actions
+    #region Client
+    [Client]
+    public void OnPrimaryPlaceable(GameObject _objectToSpawn, Vector3 _position) {
+        CmdOnPrimaryPlaceable(_objectToSpawn, _position);
+    }
+    #endregion
+    #region Commands
+    [Command]
+    void CmdOnPrimaryPlaceable(GameObject _objectToSpawn, Vector3 _position) {
+        GameObject _object = Instantiate(_objectToSpawn, _position, Quaternion.identity);
+    }
+    #endregion
+    #region ClientRPCs
+    [ClientRpc]
+    void RpcOnPrimaryPlaceable() {
+
+    }
+    #endregion
+    #endregion
+
+    #region Tool Actions
+    #region Client
+    #endregion
+    #region Commands
+    #endregion
+    #region ClientRPCs
+    #endregion
+    #endregion
+
+    #region Usable Actions
+    #region Client
+    #endregion
+    #region Commands
+    #endregion
+    #region ClientRPCs
     #endregion
     #endregion
 }

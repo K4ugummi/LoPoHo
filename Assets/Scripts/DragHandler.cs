@@ -15,7 +15,6 @@ public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     public void OnBeginDrag(PointerEventData _eventData) {
         itemBeingDragged = gameObject;
         startPosition = transform.position;
-        Debug.Log(transform.position);
         startParent = transform.parent.transform;
         startID = transform.parent.transform.GetComponent<DragSlot>().slotID;
         startTypeID = transform.parent.transform.GetComponent<DragSlot>().slotTypeID;

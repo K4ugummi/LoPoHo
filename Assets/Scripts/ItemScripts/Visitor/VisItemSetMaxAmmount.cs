@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class VisItemAmmo : VisItem {
+public class VisItemSetMaxAmmount : VisItem {
 
     public int currentClipSize;
     public int maxClipSize;
