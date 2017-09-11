@@ -29,6 +29,7 @@ public class PlayerInteraction : NetworkBehaviour {
         itemManager = GetComponent<ItemManager>();
     }
 
+
     [Client]
     void Update() {
         if (Input.GetKeyDown(KeyCode.F12)) {
@@ -178,6 +179,7 @@ public class PlayerInteraction : NetworkBehaviour {
         if (!isLocalPlayer) {
             return;
         }
+        Debug.Log("OnPlayerSHotWIthWeapon(" + _playerID + ")");
         CmdOnPlayerShotWithWeapon(_playerID, _damage, _sourceID);
     }
     #endregion
@@ -265,20 +267,24 @@ public class PlayerInteraction : NetworkBehaviour {
     #region Placeable Actions
     #region Client
     [Client]
+    // Make sure the Prefab _objectToSpawn is registered in NetworkManager spawnable objects!
     public void OnPrimaryPlaceable(GameObject _objectToSpawn, Vector3 _position) {
-        CmdOnPrimaryPlaceable(_objectToSpawn, _position);
+        Debug.Log("Spawning at " + _position);
+        int _objectToSpawnIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(_objectToSpawn);
+        CmdOnPrimaryPlaceable(_objectToSpawnIndex, _position);
     }
     #endregion
     #region Commands
     [Command]
-    void CmdOnPrimaryPlaceable(GameObject _objectToSpawn, Vector3 _position) {
-        GameObject _object = Instantiate(_objectToSpawn, _position, Quaternion.identity);
+    void CmdOnPrimaryPlaceable(int _objectToSpawnIndex, Vector3 _position) {
+        GameObject _object = Instantiate(NetworkManager.singleton.spawnPrefabs[_objectToSpawnIndex], _position, Quaternion.identity);
+        //ClientScene.RegisterPrefab(_object);
+        NetworkServer.Spawn(_object);
     }
     #endregion
     #region ClientRPCs
     [ClientRpc]
     void RpcOnPrimaryPlaceable() {
-
     }
     #endregion
     #endregion

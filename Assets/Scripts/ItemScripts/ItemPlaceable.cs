@@ -32,8 +32,7 @@ public override void Accept(VisItemPrimaryDown _vis) {
         Debug.DrawRay(playerInteraction.cam.transform.position, playerInteraction.cam.transform.forward * 200f, Color.red, 5f);
         RaycastHit _hit;
         if (Physics.Raycast(playerInteraction.cam.transform.position, playerInteraction.cam.transform.forward, out _hit, placeableRange, hitMask)) {
-
-            playerInteraction.OnPrimaryPlaceable(objectToSpawn, _hit.transform.position);
+            playerInteraction.OnPrimaryPlaceable(objectToSpawn, _hit.point);
         }
     }
 

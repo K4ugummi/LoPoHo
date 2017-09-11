@@ -49,26 +49,18 @@ public class ItemManager : NetworkBehaviour {
 
     [ClientRpc]
     void RpcOnEquipItem(int _itemIndex) {
+        StoreCurrentItemInstanceState();
         if (currentItemInstance != null) {
-            if (isLocalPlayer) {
-                VisItemGetAmmo _visGet = new VisItemGetAmmo();
-                currentItemInstance.GetComponent<Item>().Accept(_visGet);
-                if (items[selectedItemIndex] != null) {
-                    VisItemSetAmmo _visSet = new VisItemSetAmmo();
-                    _visSet.currentAmmo = _visGet.currentClipSize;
-                    items[selectedItemIndex].Accept(_visSet);
-                }
-            }
             Destroy(currentItemInstance);
         }
 
         Item _item = items[_itemIndex];
-        currentItem = _item;
         if (isLocalPlayer) {
             isItemChangedGuiFlag = true;
             selectedItemIndex = _itemIndex;
         }
-        if (currentItem == null) {
+        if (_item == null) {
+            currentItem = null;
             return;
         }
 
@@ -175,7 +167,7 @@ public class ItemManager : NetworkBehaviour {
             case 0:
                 if (_info.fromID == selectedItemIndex) {
                     _isCurrentSelectedItem = true;
-                    StoreCurrentItemInfo();
+                    StoreCurrentItemInstanceState();
                 }
                 _from = items[_info.fromID];
                 break;
@@ -190,7 +182,7 @@ public class ItemManager : NetworkBehaviour {
             case 0:
                 if (_info.toID == selectedItemIndex) {
                     _isCurrentSelectedItem = true;
-                    StoreCurrentItemInfo();
+                    StoreCurrentItemInstanceState();
                 }
                 _to = items[_info.toID];
                 items[_info.toID] = _from;
@@ -219,9 +211,9 @@ public class ItemManager : NetworkBehaviour {
         }
     }
 
-    void StoreCurrentItemInfo() {
-        if (currentItemInstance != null) {
-            if (isLocalPlayer) {
+    void StoreCurrentItemInstanceState() {
+        if (isLocalPlayer) {
+            if (currentItemInstance != null) {
                 VisItemGetAmmo _visGet = new VisItemGetAmmo();
                 currentItemInstance.GetComponent<Item>().Accept(_visGet);
                 if (items[selectedItemIndex] != null) {
@@ -230,7 +222,6 @@ public class ItemManager : NetworkBehaviour {
                     items[selectedItemIndex].Accept(_visSet);
                 }
             }
-            Destroy(currentItemInstance);
         }
     }
 }

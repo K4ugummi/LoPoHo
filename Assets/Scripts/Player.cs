@@ -101,28 +101,6 @@ public class Player : NetworkBehaviour {
         SetDefaults();
     }
 
-    ////Testfunction to kill the player with shortcut "K"
-    //void Update() {
-    //    if (!isLocalPlayer) {
-    //        return;
-    //    }
-    //    if (Input.GetKeyDown(KeyCode.K)) {
-    //        RpcTakeDamage(99999, transform.name);
-    //    }
-    //}
-
-    //[ClientRpc]     // a method that is called on all clients
-    //public void RpcTakeDamage(int _dmg, string _sourceID) {
-    //    if (isDead) {
-    //        return;
-    //    }
-    //    currentHealth -= _dmg;
-
-    //    if (currentHealth <= Mathf.Epsilon) {
-    //        Die(_sourceID);
-    //    }
-    //}
-
     [ClientRpc]     // a method that is called on all clients
     public void RpcTakeDamage(float _dmg, string _sourceID) {
         if (isDead) {
