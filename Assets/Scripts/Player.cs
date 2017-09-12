@@ -113,6 +113,7 @@ public class Player : NetworkBehaviour {
         }
     }
 
+    [Client]
     private void Die(string _sourceID) {
         isDead = true;
 
