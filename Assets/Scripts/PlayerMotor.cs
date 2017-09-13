@@ -13,12 +13,14 @@ public class PlayerMotor : MonoBehaviour {
     // For jumping
     [SerializeField]
     private LayerMask canStandOnMask;
-    private float lastJump = 0f;
 
     private Vector3 velocity = Vector3.zero;
     private Vector3 rotation = Vector3.zero;
     private float cameraRotationX = 0f;
     private float currentCameraRotationX = 0f;
+
+    private float recoil = 0f;
+    private float recoilSpeed = 20f;
 
     private Rigidbody rb;
 
@@ -36,11 +38,8 @@ public class PlayerMotor : MonoBehaviour {
     public void Jump(float _jumpForce) {
         RaycastHit _hit;
         if (Physics.Raycast(transform.position, Vector3.down, out _hit, 1.1f, canStandOnMask)) {
-            if (lastJump > .1f) {
-                // We are standing on something and can jump now
-                rb.AddForce(new Vector3(0, _jumpForce, 0), ForceMode.VelocityChange);
-                lastJump = 0f;
-            }
+            // We are standing on something and can jump now
+            rb.AddForce(new Vector3(0, _jumpForce, 0), ForceMode.VelocityChange);
         }
     }
 
@@ -58,7 +57,16 @@ public class PlayerMotor : MonoBehaviour {
     void FixedUpdate() {
         PerformMovement();
         PerformRotation();
-        lastJump += Time.fixedDeltaTime;
+    }
+
+    void Update() {
+        if (recoil > 2.0) {
+            recoilSpeed = 40f;
+        }
+        else {
+            recoilSpeed = 20f;
+        }
+        PerformRecoil();
     }
 
     // Perform movement, based on velocity variable
@@ -83,5 +91,20 @@ public class PlayerMotor : MonoBehaviour {
                 cam.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0f, 0f);
             }
         }
+    }
+
+    public void PerformRecoil() {
+        if (recoil > Mathf.Epsilon) {
+            //cam.transform.rotation = Quaternion.Slerp(cam.transform.rotation, _maxRecoil, recoilSpeed * Time.fixedDeltaTime);
+            cameraRotationX += recoilSpeed * Time.deltaTime;
+            recoil -= recoilSpeed * Time.deltaTime;
+        }
+    }
+
+    public void AddRecoil(float _recoil) {
+        if (recoil < 0) {
+            recoil = 0;
+        }
+        recoil += _recoil;
     }
 }

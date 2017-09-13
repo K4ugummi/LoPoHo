@@ -19,6 +19,7 @@ public class PlayerInteraction : NetworkBehaviour {
     private Item currentItem;
     private GameObject currentItemInstance;
     private ItemManager itemManager;
+    private PlayerMotor playerMotor;
     private bool canInteractWithObject = false;
 
     void Start() {
@@ -27,6 +28,7 @@ public class PlayerInteraction : NetworkBehaviour {
             this.enabled = false;
         }
         itemManager = GetComponent<ItemManager>();
+        playerMotor = GetComponent<PlayerMotor>();
     }
 
 
@@ -147,10 +149,11 @@ public class PlayerInteraction : NetworkBehaviour {
     #region Weapon Actions
     #region Client
     [Client]
-    public void OnPrimaryWeapon() {
+    public void OnPrimaryWeapon(float _recoil) {
         if (!isLocalPlayer) {
             return;
         }
+        playerMotor.AddRecoil(_recoil);
         CmdOnPrimaryWeapon();
     }
     [Client]

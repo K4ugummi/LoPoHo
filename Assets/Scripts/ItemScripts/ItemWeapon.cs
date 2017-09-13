@@ -11,6 +11,7 @@ public class ItemWeapon : Item {
     private LayerMask hitMask;
     public Transform actionOrigin;
     public float weaponDamage;
+    public float weaponRecoil;
     public int weaponMaxClipSize;
     [HideInInspector]
     public int weaponCurClipSize;
@@ -92,7 +93,7 @@ public class ItemWeapon : Item {
 
         weaponCurClipSize--;
         // Call the OnPrimary method on the server
-        playerInteraction.OnPrimaryWeapon();
+        playerInteraction.OnPrimaryWeapon(weaponRecoil);
         RaycastHit _hit;
         if (Physics.Raycast(playerInteraction.cam.transform.position, playerInteraction.cam.transform.forward, out _hit, weaponRange, hitMask)) {
             // TODO: Differentiate hit effect and actions!
