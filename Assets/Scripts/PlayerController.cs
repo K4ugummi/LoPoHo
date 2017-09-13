@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour {
         Vector3 _moveVertical = transform.forward * _zMovement;
 
         // Jump
-        if (Input.GetButton("Jump")) {
+        if (Input.GetButtonDown("Jump")) {
             motor.Jump(jumpForce);
         }
 

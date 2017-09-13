@@ -76,6 +76,15 @@ public class ItemManager : NetworkBehaviour {
         currentItem = currentItemInstance.GetComponent<Item>();
     }
 
+    [ClientRpc]
+    public void RpcAddItemToInventory() {
+        foreach (Item _item in items) {
+            if (_item == null) {
+
+            }
+        }
+    }
+
     public int GetItemsLength() {
         return items.Length;
     }

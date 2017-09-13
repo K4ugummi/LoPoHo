@@ -4,11 +4,15 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour {
 
+    private const string PLAYER_ID_PREFIX = "Player ";
+
     public static GameManager instance;
 
     public ServerSettings serverSettings;
+    
+    private static Dictionary<string, Player> playerDictionary = new Dictionary<string, Player>();
 
-	[SerializeField]
+    [SerializeField]
 	private GameObject sceneCamera;
 
     public delegate void OnPlayerKilledCallback(string _playerKilled, string _dmgSource);
@@ -42,10 +46,11 @@ public class GameManager : MonoBehaviour {
     }
 
     #region Player Dictionary
-
-    private const string PLAYER_ID_PREFIX = "Player ";
-
-    private static Dictionary<string, Player> playerDictionary = new Dictionary<string, Player>();
+    public static void ClearPlayerDictionaryOnStart() {
+        if (playerDictionary != null) {
+            playerDictionary.Clear();
+        }
+    }
 
     public static void RegisterPlayer(string _netId, Player _player) {
         string _playerId = PLAYER_ID_PREFIX + _netId;
@@ -68,17 +73,5 @@ public class GameManager : MonoBehaviour {
     public static Player[] GetAllPlayers() {
         return playerDictionary.Values.ToArray();
     }
-
-    //void OnGUI() {
-    //    GUILayout.BeginArea(new Rect(50, 200, 200, 500));
-    //    GUILayout.BeginVertical();
-
-    //    foreach (string _playerId in playerDictionary.Keys) {
-    //        GUILayout.Label(_playerId + "   -   " + playerDictionary[_playerId].transform.name);
-    //    }
-
-    //    GUILayout.EndVertical();
-    //    GUILayout.EndArea();
-    //}
     #endregion
 }

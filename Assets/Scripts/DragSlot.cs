@@ -24,7 +24,7 @@ public class DragSlot : MonoBehaviour, IDropHandler {
         }
     }
 
-    public void OnDrop (PointerEventData _eventData) {
+    public void OnDrop(PointerEventData _eventData) {
         if (!item) {
             DragHandler.itemBeingDragged.transform.SetParent(transform);
             int _slotID = transform.GetComponent<DragSlot>().slotID;

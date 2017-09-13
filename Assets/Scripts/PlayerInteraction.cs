@@ -285,14 +285,24 @@ public class PlayerInteraction : NetworkBehaviour {
     #region ClientRPCs
     [ClientRpc]
     void RpcOnPrimaryPlaceable() {
+
     }
     #endregion
     #endregion
 
     #region Tool Actions
     #region Client
+    [Client]
+    public void OnPrimaryToolHit(GameObject _hitObject) {
+        CmdOnPrimaryToolHit(_hitObject);
+    }
     #endregion
     #region Commands
+    [Command]
+    public void CmdOnPrimaryToolHit(GameObject _hitObject) {
+        Placeable _placeable = _hitObject.GetComponent<Placeable>();
+        NetworkServer.Destroy(_hitObject);
+    }
     #endregion
     #region ClientRPCs
     #endregion
